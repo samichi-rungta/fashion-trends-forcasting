@@ -1,0 +1,75 @@
+# ---------------------------------------------------------------
+# Python
+# ---------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# ---------------------------------------------------------------
+# Jupyter
+# ---------------------------------------------------------------
+.ipynb_checkpoints/
+
+# ---------------------------------------------------------------
+# Secrets and credentials (never commit these)
+# ---------------------------------------------------------------
+.env
+.env.*
+*.pem
+*.key
+kaggle.json
+.aws/
+.azure/
+
+# ---------------------------------------------------------------
+# Large third-party datasets (download these yourself, see README)
+# H&M, VISUELLE, F1/HERMES, etc. go into data/raw/
+# ---------------------------------------------------------------
+data/raw/
+data/external/
+*.tar.xz
+*.tgz
+*.tar.gz
+*.zip
+transactions_train.csv
+
+# ---------------------------------------------------------------
+# Models and experiment tracking (for the later modelling stage)
+# ---------------------------------------------------------------
+models/
+*.pkl
+*.joblib
+*.ckpt
+mlruns/
+wandb/
+lightning_logs/
+
+# ---------------------------------------------------------------
+# Editors and operating systems
+# ---------------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+~$*.xlsx
+~$*.docx
+
+# ---------------------------------------------------------------
+# Intentionally TRACKED (do not add these to the ignore list)
+# ---------------------------------------------------------------
+# google_trends_keywords.xlsx   - input keyword list for the notebook
+# raw_pulls/                    - cached Google Trends pulls; Google's data changes
+#                                 slightly between pulls and the "today 5-y" window
+#                                 moves, so these keep the analysis reproducible
+# trends_weekly_*.csv           - stitched and cleaned weekly tables (small)
+# trends_spike_weeks.csv        - spike-week flags

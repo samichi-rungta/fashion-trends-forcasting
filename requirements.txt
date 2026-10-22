@@ -1,0 +1,11 @@
+# Packages used by google_trends_eda.ipynb
+# Versions are not pinned yet. After a successful run, record the exact versions
+# with `pip freeze` and pin them here so the EDA can be re-run identically.
+pandas
+numpy
+matplotlib
+seaborn
+statsmodels
+pytrends
+openpyxl        # needed by pandas.read_excel for google_trends_keywords.xlsx
+jupyterlab
