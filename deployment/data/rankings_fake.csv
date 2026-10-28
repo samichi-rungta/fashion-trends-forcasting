@@ -1,0 +1,661 @@
+week,style,category,horizon,predicted_growth,rank,model
+2026-09-06,oversized sunglasses,Accessories,4,1.299,1,fake_demo
+2026-09-06,loafers,Shoes,4,1.249,2,fake_demo
+2026-09-06,balletcore,Aesthetics and styles,4,1.175,3,fake_demo
+2026-09-06,gorpcore,Aesthetics and styles,4,1.156,4,fake_demo
+2026-09-06,butter yellow,Colors,4,1.153,5,fake_demo
+2026-09-06,scrunchie,Accessories,4,1.15,6,fake_demo
+2026-09-06,tote bag,Bags,4,1.137,7,fake_demo
+2026-09-06,lace,Patterns and materials,4,1.123,8,fake_demo
+2026-09-06,cargo pants,Trousers and shorts,4,1.115,9,fake_demo
+2026-09-06,hoodie,Tops and knitwear,4,1.113,10,fake_demo
+2026-09-06,baby blue,Colors,4,1.1,11,fake_demo
+2026-09-06,bermuda shorts,Trousers and shorts,4,1.086,12,fake_demo
+2026-09-06,ballet flats,Shoes,4,1.072,13,fake_demo
+2026-09-06,y2k fashion,Aesthetics and styles,4,1.067,14,fake_demo
+2026-09-06,barrel jeans,Jeans and denim,4,1.057,15,fake_demo
+2026-09-06,trench coat,Outerwear,4,1.055,16,fake_demo
+2026-09-06,kitten heels,Shoes,4,1.053,17,fake_demo
+2026-09-06,baguette bag,Bags,4,1.049,18,fake_demo
+2026-09-06,coquette,Aesthetics and styles,4,1.038,19,fake_demo
+2026-09-06,pleated skirt,Skirts and dresses,4,1.037,20,fake_demo
+2026-09-06,hoop earrings,Accessories,4,1.028,21,fake_demo
+2026-09-06,capri pants,Trousers and shorts,4,1.023,22,fake_demo
+2026-09-06,puffer jacket,Outerwear,4,1.022,23,fake_demo
+2026-09-06,baggy jeans,Jeans and denim,4,1.018,24,fake_demo
+2026-09-06,joggers,Trousers and shorts,4,1.017,25,fake_demo
+2026-09-06,crossbody bag,Bags,4,1.017,26,fake_demo
+2026-09-06,corset dress,Skirts and dresses,4,1.01,27,fake_demo
+2026-09-06,blazer,Outerwear,4,1.008,28,fake_demo
+2026-09-06,chocolate brown,Colors,4,0.999,29,fake_demo
+2026-09-06,bomber jacket,Outerwear,4,0.998,30,fake_demo
+2026-09-06,quiet luxury,Aesthetics and styles,4,0.998,31,fake_demo
+2026-09-06,skinny jeans,Jeans and denim,4,0.996,32,fake_demo
+2026-09-06,mary janes,Shoes,4,0.996,33,fake_demo
+2026-09-06,clogs,Shoes,4,0.996,34,fake_demo
+2026-09-06,leopard print,Patterns and materials,4,0.996,35,fake_demo
+2026-09-06,polka dot,Patterns and materials,4,0.99,36,fake_demo
+2026-09-06,faux fur coat,Outerwear,4,0.983,37,fake_demo
+2026-09-06,gingham,Patterns and materials,4,0.982,38,fake_demo
+2026-09-06,sundress,Skirts and dresses,4,0.976,39,fake_demo
+2026-09-06,mom jeans,Jeans and denim,4,0.973,40,fake_demo
+2026-09-06,sage green,Colors,4,0.973,41,fake_demo
+2026-09-06,wide leg jeans,Jeans and denim,4,0.968,42,fake_demo
+2026-09-06,mini bag,Bags,4,0.953,43,fake_demo
+2026-09-06,crop top,Tops and knitwear,4,0.949,44,fake_demo
+2026-09-06,cherry red,Colors,4,0.945,45,fake_demo
+2026-09-06,cardigan,Tops and knitwear,4,0.944,46,fake_demo
+2026-09-06,leggings,Trousers and shorts,4,0.943,47,fake_demo
+2026-09-06,turtleneck,Tops and knitwear,4,0.931,48,fake_demo
+2026-09-06,slip dress,Skirts and dresses,4,0.902,49,fake_demo
+2026-09-06,baby tee,Tops and knitwear,4,0.898,50,fake_demo
+2026-09-06,belt bag,Bags,4,0.883,51,fake_demo
+2026-09-06,satin,Patterns and materials,4,0.883,52,fake_demo
+2026-09-06,bucket hat,Accessories,4,0.865,53,fake_demo
+2026-09-06,mini skirt,Skirts and dresses,4,0.848,54,fake_demo
+2026-09-06,claw clip,Accessories,4,0.848,55,fake_demo
+2026-09-06,claw clip,Accessories,8,1.482,1,fake_demo
+2026-09-06,faux fur coat,Outerwear,8,1.378,2,fake_demo
+2026-09-06,turtleneck,Tops and knitwear,8,1.259,3,fake_demo
+2026-09-06,satin,Patterns and materials,8,1.229,4,fake_demo
+2026-09-06,leggings,Trousers and shorts,8,1.223,5,fake_demo
+2026-09-06,bermuda shorts,Trousers and shorts,8,1.22,6,fake_demo
+2026-09-06,crop top,Tops and knitwear,8,1.213,7,fake_demo
+2026-09-06,oversized sunglasses,Accessories,8,1.193,8,fake_demo
+2026-09-06,tote bag,Bags,8,1.186,9,fake_demo
+2026-09-06,sage green,Colors,8,1.179,10,fake_demo
+2026-09-06,mini bag,Bags,8,1.136,11,fake_demo
+2026-09-06,clogs,Shoes,8,1.132,12,fake_demo
+2026-09-06,gorpcore,Aesthetics and styles,8,1.128,13,fake_demo
+2026-09-06,joggers,Trousers and shorts,8,1.123,14,fake_demo
+2026-09-06,sundress,Skirts and dresses,8,1.116,15,fake_demo
+2026-09-06,barrel jeans,Jeans and denim,8,1.11,16,fake_demo
+2026-09-06,corset dress,Skirts and dresses,8,1.094,17,fake_demo
+2026-09-06,mini skirt,Skirts and dresses,8,1.087,18,fake_demo
+2026-09-06,butter yellow,Colors,8,1.081,19,fake_demo
+2026-09-06,capri pants,Trousers and shorts,8,1.075,20,fake_demo
+2026-09-06,y2k fashion,Aesthetics and styles,8,1.069,21,fake_demo
+2026-09-06,hoop earrings,Accessories,8,1.063,22,fake_demo
+2026-09-06,cherry red,Colors,8,1.061,23,fake_demo
+2026-09-06,crossbody bag,Bags,8,1.031,24,fake_demo
+2026-09-06,mom jeans,Jeans and denim,8,1.026,25,fake_demo
+2026-09-06,gingham,Patterns and materials,8,1.017,26,fake_demo
+2026-09-06,blazer,Outerwear,8,1.007,27,fake_demo
+2026-09-06,ballet flats,Shoes,8,1.007,28,fake_demo
+2026-09-06,bomber jacket,Outerwear,8,0.979,29,fake_demo
+2026-09-06,cargo pants,Trousers and shorts,8,0.971,30,fake_demo
+2026-09-06,hoodie,Tops and knitwear,8,0.959,31,fake_demo
+2026-09-06,loafers,Shoes,8,0.954,32,fake_demo
+2026-09-06,puffer jacket,Outerwear,8,0.953,33,fake_demo
+2026-09-06,wide leg jeans,Jeans and denim,8,0.95,34,fake_demo
+2026-09-06,bucket hat,Accessories,8,0.94,35,fake_demo
+2026-09-06,belt bag,Bags,8,0.929,36,fake_demo
+2026-09-06,mary janes,Shoes,8,0.928,37,fake_demo
+2026-09-06,baguette bag,Bags,8,0.909,38,fake_demo
+2026-09-06,chocolate brown,Colors,8,0.906,39,fake_demo
+2026-09-06,balletcore,Aesthetics and styles,8,0.903,40,fake_demo
+2026-09-06,skinny jeans,Jeans and denim,8,0.902,41,fake_demo
+2026-09-06,baggy jeans,Jeans and denim,8,0.885,42,fake_demo
+2026-09-06,slip dress,Skirts and dresses,8,0.873,43,fake_demo
+2026-09-06,coquette,Aesthetics and styles,8,0.867,44,fake_demo
+2026-09-06,scrunchie,Accessories,8,0.863,45,fake_demo
+2026-09-06,baby tee,Tops and knitwear,8,0.852,46,fake_demo
+2026-09-06,leopard print,Patterns and materials,8,0.832,47,fake_demo
+2026-09-06,kitten heels,Shoes,8,0.818,48,fake_demo
+2026-09-06,trench coat,Outerwear,8,0.806,49,fake_demo
+2026-09-06,baby blue,Colors,8,0.785,50,fake_demo
+2026-09-06,quiet luxury,Aesthetics and styles,8,0.769,51,fake_demo
+2026-09-06,polka dot,Patterns and materials,8,0.698,52,fake_demo
+2026-09-06,pleated skirt,Skirts and dresses,8,0.694,53,fake_demo
+2026-09-06,lace,Patterns and materials,8,0.667,54,fake_demo
+2026-09-06,cardigan,Tops and knitwear,8,0.605,55,fake_demo
+2026-09-13,oversized sunglasses,Accessories,4,1.316,1,fake_demo
+2026-09-13,loafers,Shoes,4,1.242,2,fake_demo
+2026-09-13,butter yellow,Colors,4,1.225,3,fake_demo
+2026-09-13,balletcore,Aesthetics and styles,4,1.209,4,fake_demo
+2026-09-13,lace,Patterns and materials,4,1.168,5,fake_demo
+2026-09-13,gorpcore,Aesthetics and styles,4,1.16,6,fake_demo
+2026-09-13,scrunchie,Accessories,4,1.141,7,fake_demo
+2026-09-13,barrel jeans,Jeans and denim,4,1.135,8,fake_demo
+2026-09-13,bermuda shorts,Trousers and shorts,4,1.115,9,fake_demo
+2026-09-13,tote bag,Bags,4,1.111,10,fake_demo
+2026-09-13,crossbody bag,Bags,4,1.106,11,fake_demo
+2026-09-13,hoodie,Tops and knitwear,4,1.089,12,fake_demo
+2026-09-13,cargo pants,Trousers and shorts,4,1.084,13,fake_demo
+2026-09-13,ballet flats,Shoes,4,1.078,14,fake_demo
+2026-09-13,trench coat,Outerwear,4,1.06,15,fake_demo
+2026-09-13,kitten heels,Shoes,4,1.052,16,fake_demo
+2026-09-13,baguette bag,Bags,4,1.05,17,fake_demo
+2026-09-13,y2k fashion,Aesthetics and styles,4,1.047,18,fake_demo
+2026-09-13,joggers,Trousers and shorts,4,1.038,19,fake_demo
+2026-09-13,baggy jeans,Jeans and denim,4,1.031,20,fake_demo
+2026-09-13,hoop earrings,Accessories,4,1.029,21,fake_demo
+2026-09-13,pleated skirt,Skirts and dresses,4,1.027,22,fake_demo
+2026-09-13,puffer jacket,Outerwear,4,1.027,23,fake_demo
+2026-09-13,baby blue,Colors,4,1.027,24,fake_demo
+2026-09-13,skinny jeans,Jeans and denim,4,1.021,25,fake_demo
+2026-09-13,polka dot,Patterns and materials,4,1.021,26,fake_demo
+2026-09-13,chocolate brown,Colors,4,1.02,27,fake_demo
+2026-09-13,coquette,Aesthetics and styles,4,1.012,28,fake_demo
+2026-09-13,mary janes,Shoes,4,1.01,29,fake_demo
+2026-09-13,corset dress,Skirts and dresses,4,0.997,30,fake_demo
+2026-09-13,clogs,Shoes,4,0.994,31,fake_demo
+2026-09-13,capri pants,Trousers and shorts,4,0.993,32,fake_demo
+2026-09-13,quiet luxury,Aesthetics and styles,4,0.993,33,fake_demo
+2026-09-13,mini bag,Bags,4,0.992,34,fake_demo
+2026-09-13,leopard print,Patterns and materials,4,0.992,35,fake_demo
+2026-09-13,gingham,Patterns and materials,4,0.992,36,fake_demo
+2026-09-13,cherry red,Colors,4,0.982,37,fake_demo
+2026-09-13,sundress,Skirts and dresses,4,0.974,38,fake_demo
+2026-09-13,bomber jacket,Outerwear,4,0.971,39,fake_demo
+2026-09-13,mom jeans,Jeans and denim,4,0.968,40,fake_demo
+2026-09-13,faux fur coat,Outerwear,4,0.962,41,fake_demo
+2026-09-13,sage green,Colors,4,0.951,42,fake_demo
+2026-09-13,cardigan,Tops and knitwear,4,0.949,43,fake_demo
+2026-09-13,leggings,Trousers and shorts,4,0.947,44,fake_demo
+2026-09-13,wide leg jeans,Jeans and denim,4,0.941,45,fake_demo
+2026-09-13,blazer,Outerwear,4,0.939,46,fake_demo
+2026-09-13,crop top,Tops and knitwear,4,0.938,47,fake_demo
+2026-09-13,claw clip,Accessories,4,0.901,48,fake_demo
+2026-09-13,baby tee,Tops and knitwear,4,0.9,49,fake_demo
+2026-09-13,turtleneck,Tops and knitwear,4,0.9,50,fake_demo
+2026-09-13,slip dress,Skirts and dresses,4,0.888,51,fake_demo
+2026-09-13,satin,Patterns and materials,4,0.873,52,fake_demo
+2026-09-13,belt bag,Bags,4,0.858,53,fake_demo
+2026-09-13,bucket hat,Accessories,4,0.857,54,fake_demo
+2026-09-13,mini skirt,Skirts and dresses,4,0.822,55,fake_demo
+2026-09-13,claw clip,Accessories,8,1.451,1,fake_demo
+2026-09-13,faux fur coat,Outerwear,8,1.356,2,fake_demo
+2026-09-13,leggings,Trousers and shorts,8,1.249,3,fake_demo
+2026-09-13,bermuda shorts,Trousers and shorts,8,1.211,4,fake_demo
+2026-09-13,satin,Patterns and materials,8,1.2,5,fake_demo
+2026-09-13,turtleneck,Tops and knitwear,8,1.196,6,fake_demo
+2026-09-13,crop top,Tops and knitwear,8,1.195,7,fake_demo
+2026-09-13,capri pants,Trousers and shorts,8,1.153,8,fake_demo
+2026-09-13,tote bag,Bags,8,1.146,9,fake_demo
+2026-09-13,barrel jeans,Jeans and denim,8,1.122,10,fake_demo
+2026-09-13,butter yellow,Colors,8,1.119,11,fake_demo
+2026-09-13,sundress,Skirts and dresses,8,1.116,12,fake_demo
+2026-09-13,sage green,Colors,8,1.116,13,fake_demo
+2026-09-13,y2k fashion,Aesthetics and styles,8,1.116,14,fake_demo
+2026-09-13,mini bag,Bags,8,1.099,15,fake_demo
+2026-09-13,joggers,Trousers and shorts,8,1.092,16,fake_demo
+2026-09-13,oversized sunglasses,Accessories,8,1.09,17,fake_demo
+2026-09-13,corset dress,Skirts and dresses,8,1.084,18,fake_demo
+2026-09-13,clogs,Shoes,8,1.06,19,fake_demo
+2026-09-13,gingham,Patterns and materials,8,1.051,20,fake_demo
+2026-09-13,crossbody bag,Bags,8,1.044,21,fake_demo
+2026-09-13,mini skirt,Skirts and dresses,8,1.039,22,fake_demo
+2026-09-13,gorpcore,Aesthetics and styles,8,1.025,23,fake_demo
+2026-09-13,loafers,Shoes,8,1.024,24,fake_demo
+2026-09-13,bomber jacket,Outerwear,8,1.017,25,fake_demo
+2026-09-13,blazer,Outerwear,8,1.014,26,fake_demo
+2026-09-13,ballet flats,Shoes,8,1.009,27,fake_demo
+2026-09-13,hoop earrings,Accessories,8,1.002,28,fake_demo
+2026-09-13,wide leg jeans,Jeans and denim,8,0.987,29,fake_demo
+2026-09-13,cherry red,Colors,8,0.979,30,fake_demo
+2026-09-13,bucket hat,Accessories,8,0.972,31,fake_demo
+2026-09-13,hoodie,Tops and knitwear,8,0.954,32,fake_demo
+2026-09-13,baguette bag,Bags,8,0.949,33,fake_demo
+2026-09-13,cargo pants,Trousers and shorts,8,0.94,34,fake_demo
+2026-09-13,mary janes,Shoes,8,0.937,35,fake_demo
+2026-09-13,balletcore,Aesthetics and styles,8,0.935,36,fake_demo
+2026-09-13,skinny jeans,Jeans and denim,8,0.927,37,fake_demo
+2026-09-13,mom jeans,Jeans and denim,8,0.922,38,fake_demo
+2026-09-13,belt bag,Bags,8,0.903,39,fake_demo
+2026-09-13,baggy jeans,Jeans and denim,8,0.894,40,fake_demo
+2026-09-13,scrunchie,Accessories,8,0.888,41,fake_demo
+2026-09-13,puffer jacket,Outerwear,8,0.877,42,fake_demo
+2026-09-13,leopard print,Patterns and materials,8,0.869,43,fake_demo
+2026-09-13,slip dress,Skirts and dresses,8,0.855,44,fake_demo
+2026-09-13,coquette,Aesthetics and styles,8,0.854,45,fake_demo
+2026-09-13,chocolate brown,Colors,8,0.834,46,fake_demo
+2026-09-13,baby blue,Colors,8,0.804,47,fake_demo
+2026-09-13,baby tee,Tops and knitwear,8,0.787,48,fake_demo
+2026-09-13,kitten heels,Shoes,8,0.773,49,fake_demo
+2026-09-13,quiet luxury,Aesthetics and styles,8,0.773,50,fake_demo
+2026-09-13,trench coat,Outerwear,8,0.771,51,fake_demo
+2026-09-13,polka dot,Patterns and materials,8,0.717,52,fake_demo
+2026-09-13,cardigan,Tops and knitwear,8,0.688,53,fake_demo
+2026-09-13,pleated skirt,Skirts and dresses,8,0.654,54,fake_demo
+2026-09-13,lace,Patterns and materials,8,0.64,55,fake_demo
+2026-09-20,oversized sunglasses,Accessories,4,1.283,1,fake_demo
+2026-09-20,butter yellow,Colors,4,1.255,2,fake_demo
+2026-09-20,balletcore,Aesthetics and styles,4,1.231,3,fake_demo
+2026-09-20,loafers,Shoes,4,1.226,4,fake_demo
+2026-09-20,gorpcore,Aesthetics and styles,4,1.212,5,fake_demo
+2026-09-20,lace,Patterns and materials,4,1.185,6,fake_demo
+2026-09-20,crossbody bag,Bags,4,1.177,7,fake_demo
+2026-09-20,scrunchie,Accessories,4,1.171,8,fake_demo
+2026-09-20,barrel jeans,Jeans and denim,4,1.12,9,fake_demo
+2026-09-20,tote bag,Bags,4,1.103,10,fake_demo
+2026-09-20,bermuda shorts,Trousers and shorts,4,1.102,11,fake_demo
+2026-09-20,trench coat,Outerwear,4,1.095,12,fake_demo
+2026-09-20,y2k fashion,Aesthetics and styles,4,1.076,13,fake_demo
+2026-09-20,ballet flats,Shoes,4,1.074,14,fake_demo
+2026-09-20,mary janes,Shoes,4,1.063,15,fake_demo
+2026-09-20,hoodie,Tops and knitwear,4,1.056,16,fake_demo
+2026-09-20,cargo pants,Trousers and shorts,4,1.055,17,fake_demo
+2026-09-20,skinny jeans,Jeans and denim,4,1.054,18,fake_demo
+2026-09-20,kitten heels,Shoes,4,1.047,19,fake_demo
+2026-09-20,pleated skirt,Skirts and dresses,4,1.042,20,fake_demo
+2026-09-20,corset dress,Skirts and dresses,4,1.041,21,fake_demo
+2026-09-20,polka dot,Patterns and materials,4,1.037,22,fake_demo
+2026-09-20,baguette bag,Bags,4,1.033,23,fake_demo
+2026-09-20,hoop earrings,Accessories,4,1.029,24,fake_demo
+2026-09-20,capri pants,Trousers and shorts,4,1.026,25,fake_demo
+2026-09-20,puffer jacket,Outerwear,4,1.022,26,fake_demo
+2026-09-20,baby blue,Colors,4,1.007,27,fake_demo
+2026-09-20,cherry red,Colors,4,1.002,28,fake_demo
+2026-09-20,bomber jacket,Outerwear,4,0.999,29,fake_demo
+2026-09-20,baggy jeans,Jeans and denim,4,0.998,30,fake_demo
+2026-09-20,chocolate brown,Colors,4,0.997,31,fake_demo
+2026-09-20,claw clip,Accessories,4,0.993,32,fake_demo
+2026-09-20,joggers,Trousers and shorts,4,0.989,33,fake_demo
+2026-09-20,quiet luxury,Aesthetics and styles,4,0.988,34,fake_demo
+2026-09-20,coquette,Aesthetics and styles,4,0.985,35,fake_demo
+2026-09-20,leopard print,Patterns and materials,4,0.984,36,fake_demo
+2026-09-20,sage green,Colors,4,0.982,37,fake_demo
+2026-09-20,gingham,Patterns and materials,4,0.98,38,fake_demo
+2026-09-20,faux fur coat,Outerwear,4,0.976,39,fake_demo
+2026-09-20,wide leg jeans,Jeans and denim,4,0.969,40,fake_demo
+2026-09-20,mini bag,Bags,4,0.968,41,fake_demo
+2026-09-20,clogs,Shoes,4,0.967,42,fake_demo
+2026-09-20,crop top,Tops and knitwear,4,0.965,43,fake_demo
+2026-09-20,cardigan,Tops and knitwear,4,0.956,44,fake_demo
+2026-09-20,mom jeans,Jeans and denim,4,0.954,45,fake_demo
+2026-09-20,leggings,Trousers and shorts,4,0.953,46,fake_demo
+2026-09-20,blazer,Outerwear,4,0.948,47,fake_demo
+2026-09-20,sundress,Skirts and dresses,4,0.92,48,fake_demo
+2026-09-20,turtleneck,Tops and knitwear,4,0.91,49,fake_demo
+2026-09-20,slip dress,Skirts and dresses,4,0.888,50,fake_demo
+2026-09-20,baby tee,Tops and knitwear,4,0.884,51,fake_demo
+2026-09-20,satin,Patterns and materials,4,0.871,52,fake_demo
+2026-09-20,bucket hat,Accessories,4,0.864,53,fake_demo
+2026-09-20,belt bag,Bags,4,0.855,54,fake_demo
+2026-09-20,mini skirt,Skirts and dresses,4,0.836,55,fake_demo
+2026-09-20,claw clip,Accessories,8,1.308,1,fake_demo
+2026-09-20,faux fur coat,Outerwear,8,1.303,2,fake_demo
+2026-09-20,sundress,Skirts and dresses,8,1.282,3,fake_demo
+2026-09-20,bermuda shorts,Trousers and shorts,8,1.234,4,fake_demo
+2026-09-20,crop top,Tops and knitwear,8,1.224,5,fake_demo
+2026-09-20,barrel jeans,Jeans and denim,8,1.189,6,fake_demo
+2026-09-20,mini bag,Bags,8,1.187,7,fake_demo
+2026-09-20,leggings,Trousers and shorts,8,1.182,8,fake_demo
+2026-09-20,tote bag,Bags,8,1.18,9,fake_demo
+2026-09-20,satin,Patterns and materials,8,1.173,10,fake_demo
+2026-09-20,turtleneck,Tops and knitwear,8,1.14,11,fake_demo
+2026-09-20,capri pants,Trousers and shorts,8,1.132,12,fake_demo
+2026-09-20,gingham,Patterns and materials,8,1.124,13,fake_demo
+2026-09-20,butter yellow,Colors,8,1.118,14,fake_demo
+2026-09-20,sage green,Colors,8,1.113,15,fake_demo
+2026-09-20,loafers,Shoes,8,1.095,16,fake_demo
+2026-09-20,oversized sunglasses,Accessories,8,1.089,17,fake_demo
+2026-09-20,clogs,Shoes,8,1.074,18,fake_demo
+2026-09-20,mini skirt,Skirts and dresses,8,1.057,19,fake_demo
+2026-09-20,bomber jacket,Outerwear,8,1.053,20,fake_demo
+2026-09-20,corset dress,Skirts and dresses,8,1.04,21,fake_demo
+2026-09-20,hoop earrings,Accessories,8,1.034,22,fake_demo
+2026-09-20,joggers,Trousers and shorts,8,1.031,23,fake_demo
+2026-09-20,gorpcore,Aesthetics and styles,8,1.03,24,fake_demo
+2026-09-20,blazer,Outerwear,8,1.028,25,fake_demo
+2026-09-20,y2k fashion,Aesthetics and styles,8,1.024,26,fake_demo
+2026-09-20,hoodie,Tops and knitwear,8,0.995,27,fake_demo
+2026-09-20,wide leg jeans,Jeans and denim,8,0.994,28,fake_demo
+2026-09-20,ballet flats,Shoes,8,0.969,29,fake_demo
+2026-09-20,crossbody bag,Bags,8,0.968,30,fake_demo
+2026-09-20,baguette bag,Bags,8,0.961,31,fake_demo
+2026-09-20,balletcore,Aesthetics and styles,8,0.957,32,fake_demo
+2026-09-20,skinny jeans,Jeans and denim,8,0.941,33,fake_demo
+2026-09-20,baggy jeans,Jeans and denim,8,0.934,34,fake_demo
+2026-09-20,cherry red,Colors,8,0.932,35,fake_demo
+2026-09-20,puffer jacket,Outerwear,8,0.907,36,fake_demo
+2026-09-20,bucket hat,Accessories,8,0.886,37,fake_demo
+2026-09-20,leopard print,Patterns and materials,8,0.886,38,fake_demo
+2026-09-20,belt bag,Bags,8,0.883,39,fake_demo
+2026-09-20,cargo pants,Trousers and shorts,8,0.869,40,fake_demo
+2026-09-20,mary janes,Shoes,8,0.867,41,fake_demo
+2026-09-20,chocolate brown,Colors,8,0.865,42,fake_demo
+2026-09-20,mom jeans,Jeans and denim,8,0.861,43,fake_demo
+2026-09-20,baby tee,Tops and knitwear,8,0.846,44,fake_demo
+2026-09-20,slip dress,Skirts and dresses,8,0.842,45,fake_demo
+2026-09-20,scrunchie,Accessories,8,0.82,46,fake_demo
+2026-09-20,quiet luxury,Aesthetics and styles,8,0.813,47,fake_demo
+2026-09-20,coquette,Aesthetics and styles,8,0.809,48,fake_demo
+2026-09-20,baby blue,Colors,8,0.806,49,fake_demo
+2026-09-20,kitten heels,Shoes,8,0.803,50,fake_demo
+2026-09-20,trench coat,Outerwear,8,0.781,51,fake_demo
+2026-09-20,cardigan,Tops and knitwear,8,0.704,52,fake_demo
+2026-09-20,polka dot,Patterns and materials,8,0.697,53,fake_demo
+2026-09-20,pleated skirt,Skirts and dresses,8,0.638,54,fake_demo
+2026-09-20,lace,Patterns and materials,8,0.566,55,fake_demo
+2026-09-27,balletcore,Aesthetics and styles,4,1.331,1,fake_demo
+2026-09-27,loafers,Shoes,4,1.287,2,fake_demo
+2026-09-27,lace,Patterns and materials,4,1.256,3,fake_demo
+2026-09-27,oversized sunglasses,Accessories,4,1.236,4,fake_demo
+2026-09-27,butter yellow,Colors,4,1.191,5,fake_demo
+2026-09-27,scrunchie,Accessories,4,1.188,6,fake_demo
+2026-09-27,gorpcore,Aesthetics and styles,4,1.149,7,fake_demo
+2026-09-27,crossbody bag,Bags,4,1.144,8,fake_demo
+2026-09-27,y2k fashion,Aesthetics and styles,4,1.115,9,fake_demo
+2026-09-27,tote bag,Bags,4,1.112,10,fake_demo
+2026-09-27,barrel jeans,Jeans and denim,4,1.101,11,fake_demo
+2026-09-27,bermuda shorts,Trousers and shorts,4,1.085,12,fake_demo
+2026-09-27,ballet flats,Shoes,4,1.084,13,fake_demo
+2026-09-27,cargo pants,Trousers and shorts,4,1.078,14,fake_demo
+2026-09-27,trench coat,Outerwear,4,1.077,15,fake_demo
+2026-09-27,mary janes,Shoes,4,1.07,16,fake_demo
+2026-09-27,kitten heels,Shoes,4,1.058,17,fake_demo
+2026-09-27,hoodie,Tops and knitwear,4,1.042,18,fake_demo
+2026-09-27,corset dress,Skirts and dresses,4,1.029,19,fake_demo
+2026-09-27,baggy jeans,Jeans and denim,4,1.028,20,fake_demo
+2026-09-27,baby blue,Colors,4,1.027,21,fake_demo
+2026-09-27,baguette bag,Bags,4,1.022,22,fake_demo
+2026-09-27,pleated skirt,Skirts and dresses,4,1.02,23,fake_demo
+2026-09-27,hoop earrings,Accessories,4,1.005,24,fake_demo
+2026-09-27,cardigan,Tops and knitwear,4,1.001,25,fake_demo
+2026-09-27,quiet luxury,Aesthetics and styles,4,1.001,26,fake_demo
+2026-09-27,polka dot,Patterns and materials,4,0.999,27,fake_demo
+2026-09-27,wide leg jeans,Jeans and denim,4,0.995,28,fake_demo
+2026-09-27,coquette,Aesthetics and styles,4,0.991,29,fake_demo
+2026-09-27,leopard print,Patterns and materials,4,0.989,30,fake_demo
+2026-09-27,skinny jeans,Jeans and denim,4,0.987,31,fake_demo
+2026-09-27,puffer jacket,Outerwear,4,0.987,32,fake_demo
+2026-09-27,leggings,Trousers and shorts,4,0.982,33,fake_demo
+2026-09-27,joggers,Trousers and shorts,4,0.978,34,fake_demo
+2026-09-27,capri pants,Trousers and shorts,4,0.97,35,fake_demo
+2026-09-27,bomber jacket,Outerwear,4,0.969,36,fake_demo
+2026-09-27,chocolate brown,Colors,4,0.963,37,fake_demo
+2026-09-27,faux fur coat,Outerwear,4,0.962,38,fake_demo
+2026-09-27,claw clip,Accessories,4,0.955,39,fake_demo
+2026-09-27,mini bag,Bags,4,0.947,40,fake_demo
+2026-09-27,sage green,Colors,4,0.945,41,fake_demo
+2026-09-27,mom jeans,Jeans and denim,4,0.943,42,fake_demo
+2026-09-27,turtleneck,Tops and knitwear,4,0.935,43,fake_demo
+2026-09-27,clogs,Shoes,4,0.928,44,fake_demo
+2026-09-27,cherry red,Colors,4,0.928,45,fake_demo
+2026-09-27,gingham,Patterns and materials,4,0.924,46,fake_demo
+2026-09-27,blazer,Outerwear,4,0.922,47,fake_demo
+2026-09-27,crop top,Tops and knitwear,4,0.911,48,fake_demo
+2026-09-27,slip dress,Skirts and dresses,4,0.903,49,fake_demo
+2026-09-27,baby tee,Tops and knitwear,4,0.891,50,fake_demo
+2026-09-27,sundress,Skirts and dresses,4,0.877,51,fake_demo
+2026-09-27,bucket hat,Accessories,4,0.848,52,fake_demo
+2026-09-27,satin,Patterns and materials,4,0.841,53,fake_demo
+2026-09-27,mini skirt,Skirts and dresses,4,0.84,54,fake_demo
+2026-09-27,belt bag,Bags,4,0.807,55,fake_demo
+2026-09-27,bermuda shorts,Trousers and shorts,8,1.369,1,fake_demo
+2026-09-27,sundress,Skirts and dresses,8,1.297,2,fake_demo
+2026-09-27,claw clip,Accessories,8,1.287,3,fake_demo
+2026-09-27,barrel jeans,Jeans and denim,8,1.277,4,fake_demo
+2026-09-27,faux fur coat,Outerwear,8,1.233,5,fake_demo
+2026-09-27,tote bag,Bags,8,1.229,6,fake_demo
+2026-09-27,turtleneck,Tops and knitwear,8,1.225,7,fake_demo
+2026-09-27,leggings,Trousers and shorts,8,1.212,8,fake_demo
+2026-09-27,crop top,Tops and knitwear,8,1.204,9,fake_demo
+2026-09-27,satin,Patterns and materials,8,1.193,10,fake_demo
+2026-09-27,clogs,Shoes,8,1.184,11,fake_demo
+2026-09-27,sage green,Colors,8,1.177,12,fake_demo
+2026-09-27,mini bag,Bags,8,1.16,13,fake_demo
+2026-09-27,butter yellow,Colors,8,1.16,14,fake_demo
+2026-09-27,blazer,Outerwear,8,1.117,15,fake_demo
+2026-09-27,gingham,Patterns and materials,8,1.093,16,fake_demo
+2026-09-27,loafers,Shoes,8,1.08,17,fake_demo
+2026-09-27,bomber jacket,Outerwear,8,1.075,18,fake_demo
+2026-09-27,corset dress,Skirts and dresses,8,1.064,19,fake_demo
+2026-09-27,mini skirt,Skirts and dresses,8,1.056,20,fake_demo
+2026-09-27,hoop earrings,Accessories,8,1.052,21,fake_demo
+2026-09-27,capri pants,Trousers and shorts,8,1.046,22,fake_demo
+2026-09-27,oversized sunglasses,Accessories,8,1.038,23,fake_demo
+2026-09-27,wide leg jeans,Jeans and denim,8,1.035,24,fake_demo
+2026-09-27,balletcore,Aesthetics and styles,8,1.023,25,fake_demo
+2026-09-27,ballet flats,Shoes,8,1.017,26,fake_demo
+2026-09-27,hoodie,Tops and knitwear,8,1.014,27,fake_demo
+2026-09-27,cherry red,Colors,8,1.008,28,fake_demo
+2026-09-27,leopard print,Patterns and materials,8,1.006,29,fake_demo
+2026-09-27,gorpcore,Aesthetics and styles,8,1.0,30,fake_demo
+2026-09-27,joggers,Trousers and shorts,8,0.996,31,fake_demo
+2026-09-27,crossbody bag,Bags,8,0.991,32,fake_demo
+2026-09-27,belt bag,Bags,8,0.95,33,fake_demo
+2026-09-27,baggy jeans,Jeans and denim,8,0.915,34,fake_demo
+2026-09-27,y2k fashion,Aesthetics and styles,8,0.908,35,fake_demo
+2026-09-27,coquette,Aesthetics and styles,8,0.902,36,fake_demo
+2026-09-27,bucket hat,Accessories,8,0.894,37,fake_demo
+2026-09-27,quiet luxury,Aesthetics and styles,8,0.894,38,fake_demo
+2026-09-27,kitten heels,Shoes,8,0.893,39,fake_demo
+2026-09-27,baby tee,Tops and knitwear,8,0.888,40,fake_demo
+2026-09-27,puffer jacket,Outerwear,8,0.882,41,fake_demo
+2026-09-27,baguette bag,Bags,8,0.875,42,fake_demo
+2026-09-27,skinny jeans,Jeans and denim,8,0.873,43,fake_demo
+2026-09-27,mary janes,Shoes,8,0.864,44,fake_demo
+2026-09-27,scrunchie,Accessories,8,0.851,45,fake_demo
+2026-09-27,slip dress,Skirts and dresses,8,0.85,46,fake_demo
+2026-09-27,chocolate brown,Colors,8,0.849,47,fake_demo
+2026-09-27,baby blue,Colors,8,0.83,48,fake_demo
+2026-09-27,cargo pants,Trousers and shorts,8,0.829,49,fake_demo
+2026-09-27,mom jeans,Jeans and denim,8,0.795,50,fake_demo
+2026-09-27,trench coat,Outerwear,8,0.774,51,fake_demo
+2026-09-27,cardigan,Tops and knitwear,8,0.683,52,fake_demo
+2026-09-27,pleated skirt,Skirts and dresses,8,0.628,53,fake_demo
+2026-09-27,polka dot,Patterns and materials,8,0.608,54,fake_demo
+2026-09-27,lace,Patterns and materials,8,0.537,55,fake_demo
+2026-10-04,balletcore,Aesthetics and styles,4,1.321,1,fake_demo
+2026-10-04,oversized sunglasses,Accessories,4,1.286,2,fake_demo
+2026-10-04,lace,Patterns and materials,4,1.275,3,fake_demo
+2026-10-04,loafers,Shoes,4,1.241,4,fake_demo
+2026-10-04,butter yellow,Colors,4,1.188,5,fake_demo
+2026-10-04,scrunchie,Accessories,4,1.173,6,fake_demo
+2026-10-04,crossbody bag,Bags,4,1.133,7,fake_demo
+2026-10-04,ballet flats,Shoes,4,1.132,8,fake_demo
+2026-10-04,y2k fashion,Aesthetics and styles,4,1.124,9,fake_demo
+2026-10-04,tote bag,Bags,4,1.118,10,fake_demo
+2026-10-04,bermuda shorts,Trousers and shorts,4,1.117,11,fake_demo
+2026-10-04,kitten heels,Shoes,4,1.109,12,fake_demo
+2026-10-04,cargo pants,Trousers and shorts,4,1.105,13,fake_demo
+2026-10-04,gorpcore,Aesthetics and styles,4,1.102,14,fake_demo
+2026-10-04,barrel jeans,Jeans and denim,4,1.072,15,fake_demo
+2026-10-04,baguette bag,Bags,4,1.056,16,fake_demo
+2026-10-04,corset dress,Skirts and dresses,4,1.055,17,fake_demo
+2026-10-04,leopard print,Patterns and materials,4,1.039,18,fake_demo
+2026-10-04,trench coat,Outerwear,4,1.035,19,fake_demo
+2026-10-04,quiet luxury,Aesthetics and styles,4,1.035,20,fake_demo
+2026-10-04,cardigan,Tops and knitwear,4,1.029,21,fake_demo
+2026-10-04,mary janes,Shoes,4,1.027,22,fake_demo
+2026-10-04,baggy jeans,Jeans and denim,4,1.026,23,fake_demo
+2026-10-04,coquette,Aesthetics and styles,4,1.02,24,fake_demo
+2026-10-04,hoop earrings,Accessories,4,1.016,25,fake_demo
+2026-10-04,pleated skirt,Skirts and dresses,4,1.007,26,fake_demo
+2026-10-04,turtleneck,Tops and knitwear,4,1.0,27,fake_demo
+2026-10-04,bomber jacket,Outerwear,4,1.0,28,fake_demo
+2026-10-04,wide leg jeans,Jeans and denim,4,0.997,29,fake_demo
+2026-10-04,hoodie,Tops and knitwear,4,0.996,30,fake_demo
+2026-10-04,leggings,Trousers and shorts,4,0.989,31,fake_demo
+2026-10-04,polka dot,Patterns and materials,4,0.983,32,fake_demo
+2026-10-04,baby blue,Colors,4,0.974,33,fake_demo
+2026-10-04,sage green,Colors,4,0.97,34,fake_demo
+2026-10-04,chocolate brown,Colors,4,0.964,35,fake_demo
+2026-10-04,joggers,Trousers and shorts,4,0.963,36,fake_demo
+2026-10-04,mom jeans,Jeans and denim,4,0.96,37,fake_demo
+2026-10-04,capri pants,Trousers and shorts,4,0.959,38,fake_demo
+2026-10-04,skinny jeans,Jeans and denim,4,0.945,39,fake_demo
+2026-10-04,claw clip,Accessories,4,0.943,40,fake_demo
+2026-10-04,cherry red,Colors,4,0.938,41,fake_demo
+2026-10-04,gingham,Patterns and materials,4,0.934,42,fake_demo
+2026-10-04,puffer jacket,Outerwear,4,0.933,43,fake_demo
+2026-10-04,crop top,Tops and knitwear,4,0.924,44,fake_demo
+2026-10-04,faux fur coat,Outerwear,4,0.923,45,fake_demo
+2026-10-04,slip dress,Skirts and dresses,4,0.916,46,fake_demo
+2026-10-04,blazer,Outerwear,4,0.91,47,fake_demo
+2026-10-04,clogs,Shoes,4,0.902,48,fake_demo
+2026-10-04,baby tee,Tops and knitwear,4,0.892,49,fake_demo
+2026-10-04,mini bag,Bags,4,0.882,50,fake_demo
+2026-10-04,bucket hat,Accessories,4,0.861,51,fake_demo
+2026-10-04,mini skirt,Skirts and dresses,4,0.859,52,fake_demo
+2026-10-04,sundress,Skirts and dresses,4,0.839,53,fake_demo
+2026-10-04,satin,Patterns and materials,4,0.832,54,fake_demo
+2026-10-04,belt bag,Bags,4,0.768,55,fake_demo
+2026-10-04,bermuda shorts,Trousers and shorts,8,1.53,1,fake_demo
+2026-10-04,sundress,Skirts and dresses,8,1.4,2,fake_demo
+2026-10-04,barrel jeans,Jeans and denim,8,1.272,3,fake_demo
+2026-10-04,claw clip,Accessories,8,1.267,4,fake_demo
+2026-10-04,crop top,Tops and knitwear,8,1.266,5,fake_demo
+2026-10-04,tote bag,Bags,8,1.259,6,fake_demo
+2026-10-04,turtleneck,Tops and knitwear,8,1.212,7,fake_demo
+2026-10-04,leggings,Trousers and shorts,8,1.204,8,fake_demo
+2026-10-04,satin,Patterns and materials,8,1.177,9,fake_demo
+2026-10-04,mini bag,Bags,8,1.162,10,fake_demo
+2026-10-04,faux fur coat,Outerwear,8,1.154,11,fake_demo
+2026-10-04,sage green,Colors,8,1.117,12,fake_demo
+2026-10-04,capri pants,Trousers and shorts,8,1.108,13,fake_demo
+2026-10-04,bomber jacket,Outerwear,8,1.107,14,fake_demo
+2026-10-04,loafers,Shoes,8,1.101,15,fake_demo
+2026-10-04,butter yellow,Colors,8,1.098,16,fake_demo
+2026-10-04,blazer,Outerwear,8,1.096,17,fake_demo
+2026-10-04,clogs,Shoes,8,1.084,18,fake_demo
+2026-10-04,mini skirt,Skirts and dresses,8,1.074,19,fake_demo
+2026-10-04,gingham,Patterns and materials,8,1.068,20,fake_demo
+2026-10-04,balletcore,Aesthetics and styles,8,1.058,21,fake_demo
+2026-10-04,ballet flats,Shoes,8,1.057,22,fake_demo
+2026-10-04,hoodie,Tops and knitwear,8,1.051,23,fake_demo
+2026-10-04,wide leg jeans,Jeans and denim,8,1.048,24,fake_demo
+2026-10-04,leopard print,Patterns and materials,8,1.029,25,fake_demo
+2026-10-04,cherry red,Colors,8,1.023,26,fake_demo
+2026-10-04,joggers,Trousers and shorts,8,1.019,27,fake_demo
+2026-10-04,oversized sunglasses,Accessories,8,1.019,28,fake_demo
+2026-10-04,corset dress,Skirts and dresses,8,1.017,29,fake_demo
+2026-10-04,hoop earrings,Accessories,8,1.004,30,fake_demo
+2026-10-04,coquette,Aesthetics and styles,8,0.992,31,fake_demo
+2026-10-04,y2k fashion,Aesthetics and styles,8,0.958,32,fake_demo
+2026-10-04,crossbody bag,Bags,8,0.95,33,fake_demo
+2026-10-04,scrunchie,Accessories,8,0.949,34,fake_demo
+2026-10-04,baggy jeans,Jeans and denim,8,0.941,35,fake_demo
+2026-10-04,puffer jacket,Outerwear,8,0.937,36,fake_demo
+2026-10-04,gorpcore,Aesthetics and styles,8,0.934,37,fake_demo
+2026-10-04,quiet luxury,Aesthetics and styles,8,0.919,38,fake_demo
+2026-10-04,baguette bag,Bags,8,0.899,39,fake_demo
+2026-10-04,belt bag,Bags,8,0.898,40,fake_demo
+2026-10-04,slip dress,Skirts and dresses,8,0.879,41,fake_demo
+2026-10-04,mary janes,Shoes,8,0.876,42,fake_demo
+2026-10-04,bucket hat,Accessories,8,0.875,43,fake_demo
+2026-10-04,baby tee,Tops and knitwear,8,0.854,44,fake_demo
+2026-10-04,kitten heels,Shoes,8,0.839,45,fake_demo
+2026-10-04,baby blue,Colors,8,0.822,46,fake_demo
+2026-10-04,cargo pants,Trousers and shorts,8,0.813,47,fake_demo
+2026-10-04,chocolate brown,Colors,8,0.804,48,fake_demo
+2026-10-04,skinny jeans,Jeans and denim,8,0.771,49,fake_demo
+2026-10-04,trench coat,Outerwear,8,0.764,50,fake_demo
+2026-10-04,mom jeans,Jeans and denim,8,0.702,51,fake_demo
+2026-10-04,cardigan,Tops and knitwear,8,0.7,52,fake_demo
+2026-10-04,pleated skirt,Skirts and dresses,8,0.697,53,fake_demo
+2026-10-04,polka dot,Patterns and materials,8,0.634,54,fake_demo
+2026-10-04,lace,Patterns and materials,8,0.512,55,fake_demo
+2026-10-11,lace,Patterns and materials,4,1.31,1,fake_demo
+2026-10-11,oversized sunglasses,Accessories,4,1.298,2,fake_demo
+2026-10-11,balletcore,Aesthetics and styles,4,1.236,3,fake_demo
+2026-10-11,loafers,Shoes,4,1.204,4,fake_demo
+2026-10-11,scrunchie,Accessories,4,1.168,5,fake_demo
+2026-10-11,butter yellow,Colors,4,1.143,6,fake_demo
+2026-10-11,ballet flats,Shoes,4,1.141,7,fake_demo
+2026-10-11,y2k fashion,Aesthetics and styles,4,1.132,8,fake_demo
+2026-10-11,cargo pants,Trousers and shorts,4,1.125,9,fake_demo
+2026-10-11,kitten heels,Shoes,4,1.113,10,fake_demo
+2026-10-11,bermuda shorts,Trousers and shorts,4,1.11,11,fake_demo
+2026-10-11,turtleneck,Tops and knitwear,4,1.102,12,fake_demo
+2026-10-11,barrel jeans,Jeans and denim,4,1.094,13,fake_demo
+2026-10-11,tote bag,Bags,4,1.079,14,fake_demo
+2026-10-11,crossbody bag,Bags,4,1.079,15,fake_demo
+2026-10-11,baguette bag,Bags,4,1.075,16,fake_demo
+2026-10-11,gorpcore,Aesthetics and styles,4,1.045,17,fake_demo
+2026-10-11,cardigan,Tops and knitwear,4,1.041,18,fake_demo
+2026-10-11,wide leg jeans,Jeans and denim,4,1.035,19,fake_demo
+2026-10-11,baby blue,Colors,4,1.023,20,fake_demo
+2026-10-11,corset dress,Skirts and dresses,4,1.022,21,fake_demo
+2026-10-11,baggy jeans,Jeans and denim,4,1.02,22,fake_demo
+2026-10-11,coquette,Aesthetics and styles,4,1.02,23,fake_demo
+2026-10-11,hoodie,Tops and knitwear,4,1.017,24,fake_demo
+2026-10-11,bomber jacket,Outerwear,4,1.013,25,fake_demo
+2026-10-11,leggings,Trousers and shorts,4,1.012,26,fake_demo
+2026-10-11,hoop earrings,Accessories,4,1.012,27,fake_demo
+2026-10-11,trench coat,Outerwear,4,1.002,28,fake_demo
+2026-10-11,quiet luxury,Aesthetics and styles,4,0.999,29,fake_demo
+2026-10-11,pleated skirt,Skirts and dresses,4,0.995,30,fake_demo
+2026-10-11,polka dot,Patterns and materials,4,0.992,31,fake_demo
+2026-10-11,gingham,Patterns and materials,4,0.99,32,fake_demo
+2026-10-11,mary janes,Shoes,4,0.981,33,fake_demo
+2026-10-11,mom jeans,Jeans and denim,4,0.972,34,fake_demo
+2026-10-11,capri pants,Trousers and shorts,4,0.965,35,fake_demo
+2026-10-11,sage green,Colors,4,0.963,36,fake_demo
+2026-10-11,claw clip,Accessories,4,0.954,37,fake_demo
+2026-10-11,leopard print,Patterns and materials,4,0.953,38,fake_demo
+2026-10-11,skinny jeans,Jeans and denim,4,0.949,39,fake_demo
+2026-10-11,joggers,Trousers and shorts,4,0.943,40,fake_demo
+2026-10-11,baby tee,Tops and knitwear,4,0.941,41,fake_demo
+2026-10-11,cherry red,Colors,4,0.94,42,fake_demo
+2026-10-11,slip dress,Skirts and dresses,4,0.937,43,fake_demo
+2026-10-11,crop top,Tops and knitwear,4,0.932,44,fake_demo
+2026-10-11,chocolate brown,Colors,4,0.926,45,fake_demo
+2026-10-11,puffer jacket,Outerwear,4,0.918,46,fake_demo
+2026-10-11,clogs,Shoes,4,0.892,47,fake_demo
+2026-10-11,blazer,Outerwear,4,0.891,48,fake_demo
+2026-10-11,bucket hat,Accessories,4,0.891,49,fake_demo
+2026-10-11,faux fur coat,Outerwear,4,0.885,50,fake_demo
+2026-10-11,mini bag,Bags,4,0.877,51,fake_demo
+2026-10-11,satin,Patterns and materials,4,0.869,52,fake_demo
+2026-10-11,mini skirt,Skirts and dresses,4,0.847,53,fake_demo
+2026-10-11,belt bag,Bags,4,0.825,54,fake_demo
+2026-10-11,sundress,Skirts and dresses,4,0.812,55,fake_demo
+2026-10-11,bermuda shorts,Trousers and shorts,8,1.536,1,fake_demo
+2026-10-11,sundress,Skirts and dresses,8,1.407,2,fake_demo
+2026-10-11,barrel jeans,Jeans and denim,8,1.367,3,fake_demo
+2026-10-11,turtleneck,Tops and knitwear,8,1.306,4,fake_demo
+2026-10-11,claw clip,Accessories,8,1.255,5,fake_demo
+2026-10-11,satin,Patterns and materials,8,1.238,6,fake_demo
+2026-10-11,mini bag,Bags,8,1.179,7,fake_demo
+2026-10-11,tote bag,Bags,8,1.15,8,fake_demo
+2026-10-11,crop top,Tops and knitwear,8,1.148,9,fake_demo
+2026-10-11,bomber jacket,Outerwear,8,1.125,10,fake_demo
+2026-10-11,balletcore,Aesthetics and styles,8,1.101,11,fake_demo
+2026-10-11,faux fur coat,Outerwear,8,1.1,12,fake_demo
+2026-10-11,butter yellow,Colors,8,1.097,13,fake_demo
+2026-10-11,leggings,Trousers and shorts,8,1.092,14,fake_demo
+2026-10-11,capri pants,Trousers and shorts,8,1.088,15,fake_demo
+2026-10-11,wide leg jeans,Jeans and denim,8,1.078,16,fake_demo
+2026-10-11,cherry red,Colors,8,1.066,17,fake_demo
+2026-10-11,sage green,Colors,8,1.064,18,fake_demo
+2026-10-11,corset dress,Skirts and dresses,8,1.054,19,fake_demo
+2026-10-11,coquette,Aesthetics and styles,8,1.054,20,fake_demo
+2026-10-11,leopard print,Patterns and materials,8,1.05,21,fake_demo
+2026-10-11,ballet flats,Shoes,8,1.048,22,fake_demo
+2026-10-11,blazer,Outerwear,8,1.042,23,fake_demo
+2026-10-11,gingham,Patterns and materials,8,1.041,24,fake_demo
+2026-10-11,mini skirt,Skirts and dresses,8,1.027,25,fake_demo
+2026-10-11,y2k fashion,Aesthetics and styles,8,1.021,26,fake_demo
+2026-10-11,gorpcore,Aesthetics and styles,8,1.021,27,fake_demo
+2026-10-11,oversized sunglasses,Accessories,8,1.015,28,fake_demo
+2026-10-11,hoop earrings,Accessories,8,1.014,29,fake_demo
+2026-10-11,hoodie,Tops and knitwear,8,1.013,30,fake_demo
+2026-10-11,clogs,Shoes,8,1.012,31,fake_demo
+2026-10-11,joggers,Trousers and shorts,8,1.009,32,fake_demo
+2026-10-11,loafers,Shoes,8,0.968,33,fake_demo
+2026-10-11,bucket hat,Accessories,8,0.966,34,fake_demo
+2026-10-11,scrunchie,Accessories,8,0.958,35,fake_demo
+2026-10-11,baggy jeans,Jeans and denim,8,0.927,36,fake_demo
+2026-10-11,quiet luxury,Aesthetics and styles,8,0.901,37,fake_demo
+2026-10-11,crossbody bag,Bags,8,0.887,38,fake_demo
+2026-10-11,baguette bag,Bags,8,0.872,39,fake_demo
+2026-10-11,slip dress,Skirts and dresses,8,0.863,40,fake_demo
+2026-10-11,cargo pants,Trousers and shorts,8,0.849,41,fake_demo
+2026-10-11,mary janes,Shoes,8,0.835,42,fake_demo
+2026-10-11,baby blue,Colors,8,0.834,43,fake_demo
+2026-10-11,puffer jacket,Outerwear,8,0.825,44,fake_demo
+2026-10-11,kitten heels,Shoes,8,0.802,45,fake_demo
+2026-10-11,chocolate brown,Colors,8,0.8,46,fake_demo
+2026-10-11,belt bag,Bags,8,0.79,47,fake_demo
+2026-10-11,baby tee,Tops and knitwear,8,0.788,48,fake_demo
+2026-10-11,skinny jeans,Jeans and denim,8,0.774,49,fake_demo
+2026-10-11,trench coat,Outerwear,8,0.757,50,fake_demo
+2026-10-11,pleated skirt,Skirts and dresses,8,0.739,51,fake_demo
+2026-10-11,mom jeans,Jeans and denim,8,0.677,52,fake_demo
+2026-10-11,cardigan,Tops and knitwear,8,0.644,53,fake_demo
+2026-10-11,polka dot,Patterns and materials,8,0.643,54,fake_demo
+2026-10-11,lace,Patterns and materials,8,0.506,55,fake_demo

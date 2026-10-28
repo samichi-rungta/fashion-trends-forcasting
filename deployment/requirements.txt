@@ -1,0 +1,4 @@
+# Packages the app needs at runtime (installed inside the Docker image).
+fastapi==0.115.12
+uvicorn==0.34.2
+pandas==2.2.3
