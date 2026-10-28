@@ -1,0 +1,7 @@
+# Files Docker should not copy into the image.
+tests/
+scripts/
+__pycache__/
+.pytest_cache/
+*.pyc
+README.md

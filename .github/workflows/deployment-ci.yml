@@ -1,0 +1,78 @@
+# CI/CD pipeline for the deployment app.
+# CI (every push and pull request): run the tests, build the Docker image, start it and check it answers.
+# CD (only on the default branch): publish the image to GitHub Container Registry,
+# ready for Azure or AWS to pull.
+
+name: Deployment CI
+
+on:
+  push:
+    paths:
+      - "deployment/**"
+      - ".github/workflows/deployment-ci.yml"
+  pull_request:
+    paths:
+      - "deployment/**"
+      - ".github/workflows/deployment-ci.yml"
+  workflow_dispatch: # adds a "Run workflow" button on the Actions tab
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: deployment
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install packages
+        run: pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: python -m pytest -v
+
+  build:
+    needs: test # only build if the tests passed
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write # needed to publish the image
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v5
+
+      - name: Build the Docker image
+        run: docker build -t fashion-trends-api:ci deployment
+
+      - name: Start the container and check it responds
+        run: |
+          docker run -d --name api -p 8000:8000 fashion-trends-api:ci
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8000/health; then break; fi
+            sleep 1
+          done
+          echo
+          curl -fs http://localhost:8000/health
+          echo
+          curl -fs "http://localhost:8000/rankings?horizon=4&top_k=5"
+
+      - name: Show container logs if something failed
+        if: failure()
+        run: docker logs api
+
+      - name: Publish image to GitHub Container Registry
+        if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}/fashion-trends-api"
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker tag fashion-trends-api:ci "$IMAGE:${GITHUB_SHA::7}"
+          docker tag fashion-trends-api:ci "$IMAGE:latest"
+          docker push "$IMAGE:${GITHUB_SHA::7}"
+          docker push "$IMAGE:latest"
+          echo "Published $IMAGE:${GITHUB_SHA::7}" >> "$GITHUB_STEP_SUMMARY"
