@@ -1,0 +1,36 @@
+{
+  "folds": [
+    {
+      "name": "val_2022",
+      "train_end": "2021-12-31",
+      "val_start": "2022-01-01",
+      "val_end": "2022-12-31"
+    },
+    {
+      "name": "val_2023",
+      "train_end": "2022-12-31",
+      "val_start": "2023-01-01",
+      "val_end": "2023-12-31"
+    },
+    {
+      "name": "val_2024",
+      "train_end": "2023-12-31",
+      "val_start": "2024-01-01",
+      "val_end": "2024-12-31"
+    }
+  ],
+  "test_start": "2025-01-01",
+  "refit_every_weeks": 4,
+  "horizons": [
+    4,
+    8
+  ],
+  "period_column": {
+    "validation": [
+      "val_2022",
+      "val_2023",
+      "val_2024"
+    ],
+    "test": "test"
+  }
+}

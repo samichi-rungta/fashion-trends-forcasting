@@ -217,7 +217,7 @@ Make sure `google_trends_keywords.xlsx` is in the same folder as the notebook, b
 - Cached files from a `TEST_RUN = True` run are reused by the full pull.
 - To skip the pull entirely when reopening the notebook, load the saved table:
   ```python
-  df = pd.read_csv("trends_weekly_raw.csv", index_col=0, parse_dates=True)
+  df = pd.read_csv("raw_pulls/trends_weekly_raw.csv", index_col=0, parse_dates=True)
   ```
   (there is a commented-out line for this in section 4 of the notebook).
 - **Reproducibility.** `RECENT_WINDOW = "today 5-y"` moves with the calendar and Google's sampling changes the numbers slightly between pulls. To work with exactly the data used in the analysis, use the committed `raw_pulls/` and `trends_weekly_*.csv` files instead of pulling again. If you do re-pull on a later date, check that the recent and old windows still overlap, and that both come back with a 7-day step (the notebook prints this check).
@@ -227,10 +227,10 @@ Make sure `google_trends_keywords.xlsx` is in the same folder as the notebook, b
 | File | Contents |
 | --- | --- |
 | `raw_pulls/` | One CSV per keyword and window (cache of the raw pulls) |
-| `trends_weekly_raw.csv` | Stitched weekly table, all keywords (489 weeks by 137 keywords in the last full pull) |
-| `trends_weekly_clean.csv` | Same, with low-volume keywords removed |
-| `trends_weekly_nospike.csv` | Cleaned table with flagged spike weeks blanked and short gaps interpolated |
-| `trends_spike_weeks.csv` | True/False flag per week for the spike weeks |
+| `raw_pulls/trends_weekly_raw.csv` | Stitched weekly table, all keywords (489 weeks by 137 keywords in the last full pull) |
+| `raw_pulls/trends_weekly_clean.csv` | Same, with low-volume keywords removed |
+| `raw_pulls/trends_weekly_nospike.csv` | Cleaned table with flagged spike weeks blanked and short gaps interpolated |
+| `raw_pulls/trends_spike_weeks.csv` | True/False flag per week for the spike weeks |
 
 ### Notebook map
 
@@ -259,16 +259,11 @@ These come from the analysis cell at the end of the notebook and are preliminary
 - **Spring 2026 spike.** Many unrelated keywords jumped together in several weeks of 2026. With `SPIKE_SHARE = 0.5`, only 4 weeks were flagged, so the "no spike" version still contains most of the spike. The cause is unknown.
 - **"Rising" threshold.** Share of keyword-weeks above each threshold: above 1.1 is 24.1%, above 1.2 is 11.9%, above 1.3 is 6.9%, above 1.5 is 2.9%.
 
-### Open items from the notebook analysis
+### Modelling results from the prepared dataset
 
-1. `mob wife aesthetic`: fill the weeks before it appears with 0, or start its series at 2021-10, and log the choice.
-2. Replace the zero-share filter with one measured over the last 104 weeks (plus a minimum number of distinct values), and re-include `balletcore`, `clean girl aesthetic` and `gorpcore` with an "emerging" flag.
-3. Lower `SPIKE_SHARE` to about 0.25 so all spike weeks are flagged; check non-fashion control keywords and a single-country region for the same weeks.
-4. Add a market-wide index and relative-strength features.
-5. Use a detrended seasonality measure (STL seasonal strength) and consider working with logs or ratios.
-6. For weak-stitch keywords, use only the recent window or leave them out of long-history experiments; look at the `blazer` seam.
-7. Extend the correlation heatmap beyond the first 20 keywords and check COVID effects on `leggings`, `joggers` and `sweatpants`.
-8. Review the 2023 to 2026 class balance and the stability check, then choose between a 1.1 and 1.2 "rising" threshold.
+The modelling notebook used 137 keywords, retained 3 emerging styles, identified 6 weak stitches and flagged 10 spike weeks. On the full test period, the best baseline is `last_value` at 4 weeks (MAE 8.80), while `seasonal_naive` is best at 8 weeks (MAE 11.45). ETS is the best of the fitted simpler models, but is worse than those baselines: MAE 9.00 at 4 weeks and 12.71 at 8 weeks. Removing spike weeks lowers errors substantially, especially at 4 weeks, but does not produce a consistent fitted-model advantage at both horizons. These results suggest using the simple baselines as the primary benchmark and treating the spike-adjusted results as a sensitivity analysis.
+
+The selected regularisation settings were Lasso `alpha=0.0001` and Ridge `alpha=0.01` for both horizons. The largest horizon-4 Ridge features were `style_rel_mom_4`, `mom_4`, `lag_0`, `style_rel` and `market_mom_4`. These are predictive associations, not causal effects.
 
 ---
 
