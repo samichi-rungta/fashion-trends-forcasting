@@ -1,43 +1,137 @@
 """Shared settings and loading code for the section 4 analysis notebooks.
 
 Every notebook starts with:
-    from common import load_predictions
+    from common import load_predictions, RISING_THRESHOLD, DATA_LABEL
     df = load_predictions()
+
+All settings are in this file, so adapting to new or changed result files
+means editing here only, never inside the notebooks.
 """
 from pathlib import Path
 
 import pandas as pd
 
-# Which file to analyse. Switch to the real file when it arrives, e.g.
-# Path(__file__).resolve().parent.parent / "results" / "google_trends" / "predictions.csv"
-PREDICTIONS_PATH = Path(__file__).resolve().parent / "fake_data" / "predictions_fake.csv"
+# ---------------------------------------------------------------- settings --
 
-# Growth above this counts as "rising" (the team chooses 1.1 or 1.2 on training years).
-RISING_THRESHOLD = 1.1
+# True = test the notebooks on the fake file from make_fake_predictions.py.
+USE_FAKE_DATA = False
 
-# What the `date` column means. Confirm with Persons 1 and 2:
-#   "origin" = the week the forecast was made   (used by the fake file)
-#   "target" = the week being predicted
-DATE_MEANS = "origin"
+ANALYSIS = Path(__file__).resolve().parent
+RESULTS = ANALYSIS.parent / "results" / "google_trends"
+FAKE_FILE = ANALYSIS / "fake_data" / "predictions_fake.csv"
 
+MAIN_FILE = RESULTS / "predictions_lightgbm.csv"   # Person 2: agreed format, 5 seeds
+PERSON1_FILE = RESULTS / "predictions.csv"          # Person 1: baselines, ETS, Ridge, Lasso
+KEYWORD_FILE = RESULTS / "keyword_info.csv"         # category of every style
+SPIKE_FILE = RESULTS / "spike_weeks.csv"            # weeks flagged as market-wide spikes
+WEEKLY_FILE = RESULTS / "trends_weekly_prepared.csv"  # weekly search interest, for checks
+
+# Person 1's file uses date = the week being predicted, and one week's value.
+# Until it is re-saved in the agreed format, it is converted the same way as in
+# Person 2's "fair comparison": dates shifted back, then scored against the
+# 4-week-average answers. Set to False once Person 1's file follows the format.
+PERSON1_NEEDS_CONVERSION = True
+
+RISING_THRESHOLD = 1.2      # team decision, chosen on the validation years
+PERIOD = "test"             # analyse the final test only (January 2025 onwards)
+MAIN_MODEL = "lightgbm"
+BASELINES = ["last_value", "seasonal_naive"]   # avg_4w never says "rising", so it is left out of comparisons
+
+DATA_LABEL = "FAKE data" if USE_FAKE_DATA else "real data"
 REQUIRED_COLUMNS = ["date", "item", "horizon", "actual", "predicted", "model", "period", "last4_avg"]
 
 
-def load_predictions(path: Path = PREDICTIONS_PATH) -> pd.DataFrame:
-    """Read a predictions file and add the columns every analysis needs."""
-    df = pd.read_csv(path, parse_dates=["date"])
+# ----------------------------------------------------------------- loading --
 
+def _main_runs() -> pd.DataFrame:
+    """Person 2's LightGBM forecasts for the chosen period, one row per seed."""
+    df = pd.read_csv(MAIN_FILE, parse_dates=["date"])
     missing = [c for c in REQUIRED_COLUMNS if c not in df.columns]
     if missing:
-        raise ValueError(f"Predictions file is missing columns: {missing}")
+        raise ValueError(f"{MAIN_FILE.name} is missing columns: {missing}")
+    return df[df["period"] == PERIOD]
 
-    # `origin` = the week the forecast was made, whatever `date` means in the file.
-    if DATE_MEANS == "origin":
-        df["origin"] = df["date"]
-    else:
-        df["origin"] = df["date"] - pd.to_timedelta(df["horizon"] * 7, unit="D")
 
-    # Growth = 4-week average ahead divided by the last 4-week average (1.0 = no change).
+def _person1(truth: pd.DataFrame) -> pd.DataFrame:
+    """Person 1's forecasts, matched to the same forecasts and answers as Person 2's."""
+    df = pd.read_csv(PERSON1_FILE, parse_dates=["date"])
+    df = df[df["period"] == PERIOD]
+    if PERSON1_NEEDS_CONVERSION:
+        df["date"] = df["date"] - pd.to_timedelta(df["horizon"] * 7, unit="D")
+        df = df.drop(columns=["actual"])
+        # keep only forecasts that Person 2 also made, with the same answers
+        df = df.merge(truth, on=["date", "item", "horizon"], how="inner")
+    return df
+
+
+def load_seed_runs() -> pd.DataFrame:
+    """Main model, one row per seed (for the robustness check across seeds)."""
+    if USE_FAKE_DATA:
+        return _add_columns(pd.read_csv(FAKE_FILE, parse_dates=["date"]).query("model == @MAIN_MODEL"))
+    return _add_columns(_main_runs())
+
+
+def load_predictions() -> pd.DataFrame:
+    """All models for the chosen period, one row per forecast (seeds averaged)."""
+    if USE_FAKE_DATA:
+        return _add_columns(pd.read_csv(FAKE_FILE, parse_dates=["date"]))
+
+    runs = _main_runs()
+    main = (runs.groupby(["date", "item", "horizon", "model", "period"], as_index=False)
+                .agg(actual=("actual", "mean"), predicted=("predicted", "mean"),
+                     last4_avg=("last4_avg", "first"), seeds=("seed", "nunique")))
+    truth = main[["date", "item", "horizon", "actual", "last4_avg"]]
+    combined = pd.concat([main, _person1(truth)], ignore_index=True)
+    return _add_columns(combined)
+
+
+def _add_columns(df: pd.DataFrame) -> pd.DataFrame:
+    """Columns every notebook needs: origin, growth and category."""
+    df = df[df["last4_avg"] > 0].copy()          # growth is undefined when the last 4 weeks were all 0
+    df["origin"] = df["date"]                    # week the forecast was made
     df["predicted_growth"] = df["predicted"] / df["last4_avg"]
     df["actual_growth"] = df["actual"] / df["last4_avg"]
+    # Recent jump = last 4-week average ÷ the one 4 weeks earlier, matched by date
+    # (not by row position, because some weeks are missing for low-volume styles).
+    earlier = (df[["item", "origin", "last4_avg"]].drop_duplicates(["item", "origin"])
+                 .assign(origin=lambda d: d["origin"] + pd.Timedelta(weeks=4))
+                 .rename(columns={"last4_avg": "last4_avg_4w_ago"}))
+    df = df.merge(earlier, on=["item", "origin"], how="left")
+    df["recent_jump"] = df["last4_avg"] / df["last4_avg_4w_ago"]
+    if "category" not in df.columns:
+        categories = pd.read_csv(KEYWORD_FILE)[["item", "category"]]
+        df = df.merge(categories, on="item", how="left")
     return df
+
+
+def spike_weeks() -> list:
+    """Weeks the team flagged as market-wide spikes."""
+    if USE_FAKE_DATA:
+        return list(pd.to_datetime(["2026-02-08", "2026-02-15"])) + list(pd.date_range("2026-03-29", "2026-05-17", freq="7D"))
+    s = pd.read_csv(SPIKE_FILE, parse_dates=["date"])
+    return list(s.loc[s["spike_week"].astype(bool), "date"])
+
+
+# ------------------------------------------------------------------ checks --
+
+def check_definitions(df: pd.DataFrame, sample: int = 500) -> pd.DataFrame:
+    """Recompute `actual` and `last4_avg` from the weekly data for a sample of rows.
+
+    Both should match 100%. A lower share means a file uses a different definition
+    of date or actual, and every growth number built on it would be wrong.
+    """
+    weekly = pd.read_csv(WEEKLY_FILE, parse_dates=["date"]).set_index("date")
+    position = {d: i for i, d in enumerate(weekly.index)}
+    rows = []
+    for model, g in df.groupby("model"):
+        g = g[g["item"].isin(weekly.columns)].sample(min(sample, len(g)), random_state=0)
+        ok_actual, ok_last4 = [], []
+        for _, r in g.iterrows():
+            y, i, h = weekly[r["item"]].values, position[r["origin"]], int(r["horizon"])
+            ok_last4.append(abs(y[i - 3:i + 1].mean() - r["last4_avg"]) < 1e-6)
+            if i + h < len(y):
+                ok_actual.append(abs(y[i + h - 3:i + h + 1].mean() - r["actual"]) < 1e-6)
+        rows.append({"model": model,
+                     "actual matches (%)": round(100 * sum(ok_actual) / max(len(ok_actual), 1), 1),
+                     "last4_avg matches (%)": round(100 * sum(ok_last4) / max(len(ok_last4), 1), 1)})
+    return pd.DataFrame(rows).set_index("model")
