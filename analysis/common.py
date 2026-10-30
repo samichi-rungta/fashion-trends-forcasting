@@ -20,17 +20,17 @@ ANALYSIS = Path(__file__).resolve().parent
 RESULTS = ANALYSIS.parent / "results" / "google_trends"
 FAKE_FILE = ANALYSIS / "fake_data" / "predictions_fake.csv"
 
-MAIN_FILE = RESULTS / "predictions_lightgbm.csv"   # Person 2: agreed format, 5 seeds
-PERSON1_FILE = RESULTS / "predictions.csv"          # Person 1: baselines, ETS, Ridge, Lasso
+MAIN_FILE = RESULTS / "predictions_lightgbm.csv"   # LightGBM: agreed format, 5 seeds
+BASELINE_FILE = RESULTS / "predictions.csv"         # baselines, ETS, Ridge, Lasso
 KEYWORD_FILE = RESULTS / "keyword_info.csv"         # category of every style
 SPIKE_FILE = RESULTS / "spike_weeks.csv"            # weeks flagged as market-wide spikes
 WEEKLY_FILE = RESULTS / "trends_weekly_prepared.csv"  # weekly search interest, for checks
 
-# Person 1's file uses date = the week being predicted, and one week's value.
+# The baseline file uses date = the week being predicted, and one week's value.
 # Until it is re-saved in the agreed format, it is converted the same way as in
-# Person 2's "fair comparison": dates shifted back, then scored against the
-# 4-week-average answers. Set to False once Person 1's file follows the format.
-PERSON1_NEEDS_CONVERSION = True
+# the LightGBM notebook's "fair comparison": dates shifted back, then scored
+# against the 4-week-average answers. Set to False once it follows the format.
+BASELINE_NEEDS_CONVERSION = True
 
 RISING_THRESHOLD = 1.2      # team decision, chosen on the validation years
 PERIOD = "test"             # analyse the final test only (January 2025 onwards)
@@ -44,7 +44,7 @@ REQUIRED_COLUMNS = ["date", "item", "horizon", "actual", "predicted", "model", "
 # ----------------------------------------------------------------- loading --
 
 def _main_runs() -> pd.DataFrame:
-    """Person 2's LightGBM forecasts for the chosen period, one row per seed."""
+    """LightGBM forecasts for the chosen period, one row per seed."""
     df = pd.read_csv(MAIN_FILE, parse_dates=["date"])
     missing = [c for c in REQUIRED_COLUMNS if c not in df.columns]
     if missing:
@@ -52,14 +52,14 @@ def _main_runs() -> pd.DataFrame:
     return df[df["period"] == PERIOD]
 
 
-def _person1(truth: pd.DataFrame) -> pd.DataFrame:
-    """Person 1's forecasts, matched to the same forecasts and answers as Person 2's."""
-    df = pd.read_csv(PERSON1_FILE, parse_dates=["date"])
+def _baselines(truth: pd.DataFrame) -> pd.DataFrame:
+    """Baseline, ETS, Ridge and Lasso forecasts, matched to the same forecasts and answers as LightGBM."""
+    df = pd.read_csv(BASELINE_FILE, parse_dates=["date"])
     df = df[df["period"] == PERIOD]
-    if PERSON1_NEEDS_CONVERSION:
+    if BASELINE_NEEDS_CONVERSION:
         df["date"] = df["date"] - pd.to_timedelta(df["horizon"] * 7, unit="D")
         df = df.drop(columns=["actual"])
-        # keep only forecasts that Person 2 also made, with the same answers
+        # keep only forecasts that LightGBM also made, with the same answers
         df = df.merge(truth, on=["date", "item", "horizon"], how="inner")
     return df
 
@@ -81,7 +81,7 @@ def load_predictions() -> pd.DataFrame:
                 .agg(actual=("actual", "mean"), predicted=("predicted", "mean"),
                      last4_avg=("last4_avg", "first"), seeds=("seed", "nunique")))
     truth = main[["date", "item", "horizon", "actual", "last4_avg"]]
-    combined = pd.concat([main, _person1(truth)], ignore_index=True)
+    combined = pd.concat([main, _baselines(truth)], ignore_index=True)
     return _add_columns(combined)
 
 
