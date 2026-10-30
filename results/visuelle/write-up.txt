@@ -1,0 +1,15 @@
+1. What I Did
+
+I extended the existing forecasting experiments to investigate whether Google Trends search interest improves weekly sales forecasting beyond the information available from retail history, calendar variables, and planned discounts. I constructed calendar-time weekly sales series for categories, colours, and fabrics, and introduced a stock-availability filter using dated restock records. I then developed four- and eight-week-ahead forecasting experiments, comparing last-value and trailing-four-week-average baselines with Ridge regression and XGBoost, both with and without lagged search-interest features. Finally, I used paired bootstrap confidence intervals to evaluate whether adding search interest produced a reliable improvement in forecast accuracy.
+
+2. What I Found
+
+XGBoost achieved the strongest overall forecasting performance among the evaluated models, reducing test-set mean absolute error (MAE) by approximately 40% compared with the last-value baseline at the four-week horizon and 54% at the eight-week horizon. However, adding Google Trends did not produce a consistent, statistically reliable improvement in forecast accuracy. This suggests that retail-history and other forecasting features already captured much of the predictive information available in the current dataset.
+
+The results support retaining XGBoost without search features as the primary benchmark for the new weekly forecasting experiments. Nevertheless, incomplete search-data coverage and imperfect stock reconstruction limit the conclusions that can be drawn. Further work should improve stock reconstruction and search-data coverage and alignment, and adopt a strictly chronological evaluation design to strengthen the reliability of the results.
+
+3. What Changed from the Proposal, and Why?
+
+Compared with the original proposal, I extended the analysis by introducing calendar-time weekly forecasting, stock-availability filtering, four- and eight-week forecast horizons, and a more direct comparison of models with and without lagged Google Trends features. I also used paired bootstrap confidence intervals to assess whether the contribution of search interest was statistically reliable.
+
+These extensions were introduced to investigate the predictive value of search interest more directly, evaluate performance across different forecast horizons, and reduce the risk of interpreting stockout-related zero sales as low demand. The findings led to a more cautious conclusion than the initial expectation that search interest might improve forecasting: its additional predictive value was not demonstrated reliably under the current experimental conditions. The results also identified stock reconstruction, search-data coverage, and chronological evaluation as important areas for further improvement.

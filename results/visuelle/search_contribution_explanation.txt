@@ -1,0 +1,76 @@
+VISUELLE - SALES-FORECAST COMPARISON AND SEARCH CONTRIBUTION
+================================================================
+
+Files
+-----
+predictions.csv, scores.csv                 forecasts and score table (4w and 8w)
+search_contribution.csv                      each model vs its "_search" twin
+search_contribution_by_item_xgboost_test.csv per-item effect of search (XGBoost, test)
+figures/01_model_comparison_mae.png          MAE by model, horizon, period
+figures/02_example_forecasts_test_4w.png     actual vs last_value / xgboost / xgboost_search
+figures/03_search_contribution.png           MAE change with 95% CI
+figures/04_search_by_item_xgboost_test.png   items helped / hurt most by search
+make_figures.py                              regenerates the above (run from repo root)
+
+1. Forecast comparison (test, MAE; lower is better)
+---------------------------------------------------
+model            4w     8w
+last_value      0.433  0.576
+mean_last_4w    0.462  0.582
+ridge           0.349  0.395
+ridge_search    0.348  0.397
+xgboost         0.258  0.266
+xgboost_search  0.258  0.275
+
+XGBoost beats the last-value baseline by about 40% (4w) and 54% (8w).
+Ridge also beats the baselines, by less. The ranking is the same on validation.
+
+2. Contribution of the search signal
+------------------------------------
+Each model is compared with its search twin on identical rows. The 95% CI comes
+from a weekly bootstrap (2000 draws). MAE_change = with search - without search,
+so a negative value means search helped.
+
+model    period      h   MAE change   95% CI              significant
+ridge    validation  4   -0.0007      [-0.0026, -0.0000]  yes (tiny gain)
+ridge    validation  8   +0.0055      [+0.0029, +0.0070]  yes (worse)
+ridge    test        4   -0.0010      [-0.0038, +0.0002]  no
+ridge    test        8   +0.0018      [-0.0004, +0.0030]  no
+xgboost  validation  4   +0.0038      [+0.0001, +0.0089]  yes (worse)
+xgboost  validation  8   +0.0006      [-0.0062, +0.0070]  no
+xgboost  test        4   -0.0020      [-0.0097, +0.0038]  no
+xgboost  test        8   +0.0054      [-0.0060, +0.0149]  no
+
+Conclusion: the search signal gives no reliable improvement. On test every CI
+contains zero. The changes are within about +/-2% of MAE and their sign flips
+between horizons and models. At 8 weeks search is slightly worse for both models.
+Search is better on about 49-51% of rows, which is a coin flip. The same-week
+lag test (lags 0-8) agrees: the best lag is 6 weeks and gives -0.19 pp WAPE,
+CI [-0.69, +0.36].
+
+Why search adds little here
+- Coverage: the VISUELLE series end 2019-12-16, so only about 69% of test weeks
+  have a search value (own keywords: about 67%).
+- Aggregation: items are category, colour and fabric totals. Search tags are
+  product-level, so the match is loose.
+- The sales history (last values, seasonal calendar features) already explains
+  most of the variance, which leaves little for search to add.
+- Extra search features (lags h..h+4) add noise for 75 items and few weeks.
+
+3. How to read the figures
+--------------------------
+01: bars per model; the xgboost bars are lowest and the search bars match their
+    twins.
+02: example items in the test season. xgboost tracks the actual series; the
+    search and no-search lines are almost on top of each other.
+03: points are MAE changes with CI bars. Bars crossing zero mean no clear effect.
+04: items where search helped or hurt most. The effect is spread both ways,
+    which suggests noise rather than a systematic signal.
+
+Caveats
+- The stock mask is a proxy: stock reconstructed from restocks, with some sales
+  recorded in weeks marked out of stock.
+- The season split is by label; calendar release dates overlap.
+- XGBoost is used (LightGBM is not).
+- "No evidence of gain" is not proof of no effect: this is a coarse aggregate
+  test with partial search coverage.
