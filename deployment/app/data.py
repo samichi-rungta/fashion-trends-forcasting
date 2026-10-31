@@ -11,8 +11,7 @@ import pandas as pd
 
 REQUIRED_COLUMNS = ["week", "style", "category", "horizon", "predicted_growth", "rank"]
 ALLOWED_HORIZONS = {4, 8}
-DEFAULT_PATH = Path(__file__).resolve().parent.parent / "data" / "rankings_fake.csv"
-
+DEFAULT_PATH = Path(__file__).resolve().parent.parent / "data" / "rankings.csv"
 
 def rankings_path() -> Path:
     """File to serve. Set the RANKINGS_PATH environment variable to use another file."""
@@ -21,7 +20,7 @@ def rankings_path() -> Path:
 
 def rising_threshold() -> float:
     """Growth ratio above which a style counts as rising (1.1 or 1.2 in the proposal)."""
-    return float(os.environ.get("RISING_THRESHOLD", "1.1"))
+    return float(os.environ.get("RISING_THRESHOLD", "1.2"))
 
 
 def check_rankings(df: pd.DataFrame) -> None:

@@ -3,8 +3,9 @@
 A small web app that serves weekly style rankings to buyers. It reads a saved
 rankings file made by the modelling code; it does not train models itself.
 
-**Current status:** runs on a FAKE rankings file (`data/rankings_fake.csv`, model
-name `fake_demo`). The numbers are random and must not appear as results.
+**Current status:** serves the real weekly rankings from the LightGBM model
+(`data/rankings.csv`, 137 styles, January 2025 – October 2026) with a rising
+threshold of 1.2. The fake file `data/rankings_fake.csv` is kept for reference.
 
 ## What each file does
 
