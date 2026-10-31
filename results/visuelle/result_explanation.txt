@@ -1,13 +1,73 @@
-### Results explanation
+Results Explanation
+==================
 
-The experiment investigated whether Google Trends search interest improves the forecasting of fashion-related sales beyond information available from retail sales history, calendar variables and planned discount conditions. The existing proposal established the data preparation and earlier experiments. The newly completed work extends this analysis by constructing calendar-time weekly series, incorporating a stock-availability filter, comparing models with and without lagged search interest, and evaluating genuine four- and eight-week-ahead forecasts.
+The analysis investigates whether Google Trends search interest improves weekly
+fashion-sales forecasting beyond retail history, calendar variables, and planned
+discounts. It extends the earlier proposal and analyses by constructing weekly
+sales series in calendar time, filtering listing-weeks estimated to be out of
+stock, and evaluating genuine four- and eight-week-ahead forecasts.
 
-The results show that XGBoost provides the strongest forecasting performance among the evaluated models. On the test set, its mean absolute error is approximately 40% lower than the last-value baseline at a four-week horizon and 54% lower at an eight-week horizon. However, adding Google Trends does not provide a consistent improvement. The paired bootstrap confidence intervals for the test-set MAE differences all include zero, indicating no reliable incremental benefit from search in these experiments. The same-week lag analysis reaches a similar conclusion: the best validation-selected lag does not produce a statistically reliable test-set WAPE improvement.
+Evaluation design
+-----------------
+Forecast targets are split by calendar date, not by season label. Training target
+weeks are before 2018-11-26; validation covers 2018-11-26 through 2019-08-05; and
+testing begins 2019-08-12. For each horizon, model variants use the same usable
+rows and target weeks. Model fitting uses training rows only. Forecast features
+include information available at the origin, including historical sales,
+calendar and planned-discount information; search variants also include lagged
+search interest.
 
-Partial search coverage, imperfect alignment between product-level search terms and aggregated sales categories, colours and fabrics, and the predictive information already contained in retail-history features may help explain why search adds little value. These findings do not establish that search is universally unhelpful; rather, they show that its contribution was not demonstrated under the current data coverage, aggregation and evaluation design.
+The stock filter reconstructs opening stock from dated restock records and
+excludes listing-weeks estimated to have no opening stock. This reduces the risk
+of interpreting stockout-related zero sales as weak demand, but reconstructed
+stock is only a proxy: some weeks classified as out of stock still contain
+recorded sales. Results therefore measure recorded sales under this filtering
+procedure, rather than unconstrained customer demand.
 
-Stock availability also affects interpretation. The experiment reconstructs stock from dated restock records and excludes listing-weeks estimated to have no stock at the beginning of the week. This reduces the risk of treating stockout-related zero sales as low demand. Nevertheless, some listing-weeks classified as out of stock still contain recorded sales, showing that reconstructed stock is an imperfect proxy. Consequently, the evaluation measures recorded sales under the specified stock-filtering procedure rather than unconstrained customer demand.
+Forecast performance
+--------------------
+The comparison includes last-value and trailing-four-week-average baselines,
+Ridge regression, XGBoost, and LightGBM. XGBoost and LightGBM were both evaluated
+with and without search features.
 
-Discounts are included as forecasting features because observed sales vary across discount bands. Average monthly sales are highest in the 0–10% discount band and generally lower at deeper discount levels. This relationship is descriptive rather than causal: deeper discounts may occur later in a product's life, when demand is already declining. The current search ablation does not independently quantify the contribution of discounts, so a dedicated feature-ablation experiment would be required to measure their incremental predictive value.
+On the test set, XGBoost achieved WAPE of 18.97% at four weeks and 21.68% at
+eight weeks without search. LightGBM achieved 19.70% and 21.39%. Both boosted
+trees substantially reduced MAE relative to the last-value baseline: XGBoost by
+approximately 36% at four weeks and 47% at eight weeks; LightGBM by approximately
+35% and 47%. XGBoost had the lowest no-search test WAPE at four weeks, and
+LightGBM had the lowest at eight weeks.
 
-Overall, the newly completed experiments support retaining the no-search XGBoost model as the primary benchmark. The evidence suggests that retail-history and planned retail features are more useful than the tested search features under the current experimental conditions. Further work should prioritise verifying stock reconstruction, improving search coverage and alignment, and using a strictly chronological evaluation design before drawing stronger conclusions about future demand forecasting.
+Contribution of search interest
+-------------------------------
+Search impact is reported as test WAPE with search minus test WAPE without
+search, in percentage points. Confidence intervals come from a paired bootstrap
+that resamples test weeks and compares matched predictions.
+
+Model        Horizon  No-search WAPE  Search WAPE  Difference (95% CI), pp
+XGBoost      4 weeks       18.97%       20.02%    +1.05 (+0.39, +1.88)
+XGBoost      8 weeks       21.68%       22.77%    +1.14 (-0.13, +2.70)
+LightGBM     4 weeks       19.70%       19.92%    +0.22 (-0.33, +0.74)
+LightGBM     8 weeks       21.39%       20.84%    -0.54 (-1.41, +0.14)
+
+Positive differences indicate higher WAPE with search. The interval for
+four-week XGBoost is above zero, indicating a reliable deterioration in this
+comparison. The other intervals include zero, so they do not establish a
+reliable change. In particular, search does not show a reliable benefit for
+LightGBM at either horizon. These results do not prove that search has no value
+in general; incomplete temporal coverage, loose alignment between search terms
+and aggregated sales groups, and predictive information in retail history may
+limit the observed contribution.
+
+Discounts and limitations
+-------------------------
+Planned discounts are included as model features, but these results do not
+isolate their contribution. Observed differences between discount bands are
+descriptive, not causal: discounts may be applied later in a product lifecycle
+when demand is already changing. A dedicated feature-ablation analysis would be
+needed to quantify their incremental predictive value.
+
+The strongest no-search benchmark by test WAPE is XGBoost at four weeks and
+LightGBM at eight weeks. Search features do not reliably improve LightGBM and
+worsen four-week XGBoost performance. Further work should improve stock
+reconstruction and search coverage and alignment before making stronger claims
+about unconstrained demand or the general value of search interest.

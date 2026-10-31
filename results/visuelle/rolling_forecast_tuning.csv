@@ -1,0 +1,15 @@
+horizon_weeks,model,params,validation_roc_auc,train_rows,available_train_rows,validation_rows,validation_positive_rate
+4,lightgbm,"{'n_estimators': 150, 'learning_rate': 0.03, 'num_leaves': 15, 'class_weight': 'balanced', 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8}",0.8343130822693715,50000,428110,211267,0.9444731074895748
+4,lightgbm,"{'n_estimators': 100, 'learning_rate': 0.05, 'num_leaves': 15, 'class_weight': 'balanced', 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8}",0.8338579275549999,50000,428110,211267,0.9444731074895748
+4,lightgbm,"{'n_estimators': 50, 'learning_rate': 0.05, 'num_leaves': 7, 'class_weight': 'balanced', 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8}",0.8216046138814277,50000,428110,211267,0.9444731074895748
+4,logistic_regression,"{'C': 0.1, 'class_weight': 'balanced'}",0.7747443645593982,50000,428110,211267,0.9444731074895748
+4,logistic_regression,"{'C': 1.0, 'class_weight': 'balanced'}",0.7686322994776233,50000,428110,211267,0.9444731074895748
+4,logistic_regression,"{'C': 10.0, 'class_weight': 'balanced'}",0.7635868048242394,50000,428110,211267,0.9444731074895748
+4,xgboost,"{'n_estimators': 300, 'max_depth': 4, 'learning_rate': 0.05, 'subsample': 0.8, 'colsample_bytree': 0.8}",0.8342326166273566,50000,428110,211267,0.9444731074895748
+8,lightgbm,"{'n_estimators': 50, 'learning_rate': 0.05, 'num_leaves': 7, 'class_weight': 'balanced', 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8}",0.7716209575013635,50000,208739,91467,0.9995298850951709
+8,lightgbm,"{'n_estimators': 150, 'learning_rate': 0.03, 'num_leaves': 15, 'class_weight': 'balanced', 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8}",0.5865709528208969,50000,208739,91467,0.9995298850951709
+8,lightgbm,"{'n_estimators': 100, 'learning_rate': 0.05, 'num_leaves': 15, 'class_weight': 'balanced', 'subsample': 0.8, 'subsample_freq': 1, 'colsample_bytree': 0.8}",0.5790696148179503,50000,208739,91467,0.9995298850951709
+8,logistic_regression,"{'C': 0.1, 'class_weight': 'balanced'}",0.6695923822353909,50000,208739,91467,0.9995298850951709
+8,logistic_regression,"{'C': 1.0, 'class_weight': 'balanced'}",0.6645379870737723,50000,208739,91467,0.9995298850951709
+8,logistic_regression,"{'C': 10.0, 'class_weight': 'balanced'}",0.6608046790420917,50000,208739,91467,0.9995298850951709
+8,xgboost,"{'n_estimators': 300, 'max_depth': 4, 'learning_rate': 0.05, 'subsample': 0.8, 'colsample_bytree': 0.8}",0.7781298585278101,50000,208739,91467,0.9995298850951709
