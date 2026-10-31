@@ -26,11 +26,11 @@ KEYWORD_FILE = RESULTS / "keyword_info.csv"         # category of every style
 SPIKE_FILE = RESULTS / "spike_weeks.csv"            # weeks flagged as market-wide spikes
 WEEKLY_FILE = RESULTS / "trends_weekly_prepared.csv"  # weekly search interest, for checks
 
-# The baseline file uses date = the week being predicted, and one week's value.
-# Until it is re-saved in the agreed format, it is converted the same way as in
-# the LightGBM notebook's "fair comparison": dates shifted back, then scored
-# against the 4-week-average answers. Set to False once it follows the format.
-BASELINE_NEEDS_CONVERSION = True
+# The baseline file follows the agreed format (date = week the forecast was made,
+# 4-week averages, last4_avg). Set to True only for an older version that used
+# date = the week being predicted and one week's value: it is then converted the
+# same way as in the LightGBM notebook's "fair comparison".
+BASELINE_NEEDS_CONVERSION = False
 
 RISING_THRESHOLD = 1.2      # team decision, chosen on the validation years
 PERIOD = "test"             # analyse the final test only (January 2025 onwards)
@@ -82,6 +82,11 @@ def load_predictions() -> pd.DataFrame:
                      last4_avg=("last4_avg", "first"), seeds=("seed", "nunique")))
     truth = main[["date", "item", "horizon", "actual", "last4_avg"]]
     combined = pd.concat([main, _baselines(truth)], ignore_index=True)
+
+    # Compare like with like: keep only forecasts that every model made.
+    keys = ["date", "item", "horizon"]
+    models_per_forecast = combined.groupby(keys)["model"].transform("nunique")
+    combined = combined[models_per_forecast == combined["model"].nunique()]
     return _add_columns(combined)
 
 
