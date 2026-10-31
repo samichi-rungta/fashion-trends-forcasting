@@ -1,0 +1,5 @@
+period,horizon,forecast_dates,series_per_date,total_examples
+training,4,126,10000,1260000
+validation,4,39,10000,390000
+training,8,122,10000,1220000
+validation,8,39,10000,390000

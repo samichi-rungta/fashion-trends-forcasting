@@ -1,0 +1,7 @@
+dataset,frequency,model,horizon,period,with_influencer,mae,mase,mase_period,n_series,n_target_weeks,n_predictions,n_series_mase
+f1,weekly,seasonal_naive,4,validation,not_applicable,0.0035180595136328143,0.944007528786999,1,10000,39,390000,10000
+f1,weekly,last_value,4,validation,not_applicable,0.004458636665264902,1.055599444648908,1,10000,39,390000,10000
+f1,weekly,four_week_average,4,validation,not_applicable,0.004677082030204501,1.0622857754698825,1,10000,39,390000,10000
+f1,weekly,seasonal_naive,8,validation,not_applicable,0.0035180595136328143,0.944007528786999,1,10000,39,390000,10000
+f1,weekly,last_value,8,validation,not_applicable,0.006217381487948775,1.3983468622751403,1,10000,39,390000,10000
+f1,weekly,four_week_average,8,validation,not_applicable,0.00645752666939861,1.4134110002538474,1,10000,39,390000,10000

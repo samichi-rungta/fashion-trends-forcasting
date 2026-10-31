@@ -1,0 +1,11 @@
+item,category,direction,lag_weeks,training_correlation,validation_correlation,same_sign,validation_pairs
+eu_female_shoes_54,shoes,influencers_lead,1,0.4528377269549448,0.3661742189668595,True,39
+eu_female_shoes_72,shoes,influencers_lead,1,0.43935622716826556,0.390160749026168,True,39
+eu_female_shoes_62,shoes,influencers_lead,1,0.4174136645893891,0.3662625553979708,True,39
+jp_female_pants_17,pants,influencers_lead,1,-0.41427116521234547,0.10960463495046768,False,39
+eu_female_shoes_32,shoes,influencers_lead,1,0.4106804731378407,0.26477139051784876,True,39
+jp_male_shoes_65,shoes,popularity_leads,6,0.44118648635701513,0.06882115318492875,True,39
+jp_male_outerwear_140,outerwear,popularity_leads,2,0.39365936324162987,0.18023721860845474,True,39
+eu_male_outerwear_91,outerwear,popularity_leads,3,0.38974837882830277,-0.25339091578529077,False,39
+jp_female_top_138,top,popularity_leads,3,0.3770338684440951,-0.1437068635591613,False,39
+jp_male_outerwear_126,outerwear,popularity_leads,2,0.37509227938767914,-0.23127880783451077,False,39

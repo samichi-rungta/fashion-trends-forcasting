@@ -1,0 +1,7 @@
+horizon,period,validation_weeks,block_length_weeks,bootstrap_repeats,mae_reduction_percent,ci_low_percent,ci_high_percent,interpretation
+4,validation,39,4,5000,0.3919041430797367,0.10556635266704777,0.7159361863010028,interval supports improvement
+4,validation,39,8,5000,0.3919041430797367,0.18327026810723895,0.6594233874224729,interval supports improvement
+4,validation,39,13,5000,0.3919041430797367,0.27310760739460305,0.5174383896280035,interval supports improvement
+8,validation,39,4,5000,0.31532277732348124,0.03131803946975484,0.6521545940104365,interval supports improvement
+8,validation,39,8,5000,0.31532277732348124,0.06643397598702035,0.5876951380248415,interval supports improvement
+8,validation,39,13,5000,0.31532277732348124,0.07031217146642055,0.46405181469060297,interval supports improvement

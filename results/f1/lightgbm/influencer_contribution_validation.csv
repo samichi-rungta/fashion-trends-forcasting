@@ -1,0 +1,3 @@
+horizon,period,mae_without_influencer,mae_with_influencer,influencer_mae_reduction_percent,without_influencer_gain_vs_best_baseline_percent,with_influencer_gain_vs_best_baseline_percent
+4,validation,0.0029509185327413912,0.0029431239590020286,0.2641405939499631,16.12084669670021,16.342405590435746
+8,validation,0.003151353534736576,0.00314341136884014,0.25202395760716095,10.423529717880488,10.649283883370286

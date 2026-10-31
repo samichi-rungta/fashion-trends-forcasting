@@ -1,0 +1,4 @@
+period,start_date,end_date,weeks
+training,2015-01-05,2018-06-25,182
+validation,2018-07-02,2019-03-25,39
+test,2019-04-01,2019-12-30,40

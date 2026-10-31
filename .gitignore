@@ -73,3 +73,8 @@ Thumbs.db
 #                                 moves, so these keep the analysis reproducible
 # trends_weekly_*.csv           - stitched and cleaned weekly tables (small)
 # trends_spike_weeks.csv        - spike-week flags
+
+# Uncompressed F1 predictions; retain compressed copies
+/results/f1/predictions_four_week_average_validation.csv
+/results/f1/predictions_last_value_validation.csv
+/results/f1/predictions_seasonal_naive_validation.csv

@@ -1,0 +1,13 @@
+horizon,change_group,model,with_influencer,n_predictions,mae
+4,Large weekly change,lightgbm_seasonal_correction,no,23100,0.005679329574177061
+4,Large weekly change,lightgbm_seasonal_correction,yes,23100,0.005647920343885511
+4,Large weekly change,seasonal_naive,not_applicable,23100,0.005548155296437135
+4,Other weeks,lightgbm_seasonal_correction,no,376900,0.0028552396159684038
+4,Other weeks,lightgbm_seasonal_correction,yes,376900,0.0028524193072844125
+4,Other weeks,seasonal_naive,not_applicable,376900,0.0034760000207535225
+8,Large weekly change,lightgbm_seasonal_correction,no,23100,0.0056523231288490424
+8,Large weekly change,lightgbm_seasonal_correction,yes,23100,0.005626423600133058
+8,Large weekly change,seasonal_naive,not_applicable,23100,0.005548155296437135
+8,Other weeks,lightgbm_seasonal_correction,no,376900,0.00306259033408973
+8,Other weeks,lightgbm_seasonal_correction,yes,376900,0.0030535431377757874
+8,Other weeks,seasonal_naive,not_applicable,376900,0.0034760000207535225
