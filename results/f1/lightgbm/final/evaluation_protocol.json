@@ -1,0 +1,57 @@
+{
+  "model": "lightgbm_seasonal_correction",
+  "target": "single_week_popularity",
+  "horizons_weeks": [
+    4,
+    8
+  ],
+  "series_count": 10000,
+  "test_target_start": "2019-04-01",
+  "test_target_end": "2019-12-30",
+  "test_target_weeks": 40,
+  "refit_every_forecast_weeks": 4,
+  "training_rule": "training target date <= refit date",
+  "forecast_rule": "seasonal reference + predicted adjustment",
+  "clip_forecasts_at_zero": true,
+  "with_influencer_versions": [
+    "no",
+    "yes"
+  ],
+  "parameters_by_horizon": {
+    "4": {
+      "objective": "regression_l1",
+      "n_estimators": 1000,
+      "learning_rate": 0.03,
+      "num_leaves": 15,
+      "max_depth": 5,
+      "min_child_samples": 200,
+      "reg_lambda": 10.0,
+      "random_state": 42,
+      "n_jobs": 4,
+      "verbosity": -1
+    },
+    "8": {
+      "objective": "regression_l1",
+      "n_estimators": 1000,
+      "learning_rate": 0.03,
+      "num_leaves": 15,
+      "max_depth": 5,
+      "min_child_samples": 200,
+      "reg_lambda": 10.0,
+      "random_state": 42,
+      "n_jobs": 4,
+      "verbosity": -1
+    }
+  },
+  "metrics": [
+    "mae",
+    "mase_train_m1",
+    "relative_mae_vs_four_week_average"
+  ],
+  "bootstrap_block_lengths_weeks": [
+    4,
+    8,
+    13
+  ],
+  "bootstrap_repeats": 5000
+}

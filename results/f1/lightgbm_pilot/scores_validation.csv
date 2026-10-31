@@ -1,0 +1,7 @@
+model,with_influencer,horizon,period,best_iteration,mae,mase,n_predictions,dataset,frequency,n_series,mase_period
+seasonal_naive,not_applicable,4,validation,0,0.003202309711698459,0.9327287960368025,39000,f1,weekly,1000,1
+lightgbm_seasonal_correction,no,4,validation,1993,0.0026206077240749086,0.7369195867617373,39000,f1,weekly,1000,1
+lightgbm_seasonal_correction,yes,4,validation,2000,0.0026120801669943486,0.7352323378936515,39000,f1,weekly,1000,1
+seasonal_naive,not_applicable,8,validation,0,0.003202309711698459,0.9327287960368025,39000,f1,weekly,1000,1
+lightgbm_seasonal_correction,no,8,validation,1759,0.0028217903579510996,0.8009306196753891,39000,f1,weekly,1000,1
+lightgbm_seasonal_correction,yes,8,validation,1755,0.002820812984518797,0.8016521503950778,39000,f1,weekly,1000,1

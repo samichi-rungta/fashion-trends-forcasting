@@ -1,0 +1,5 @@
+horizon,metric,best_baseline,score,period
+4,mae,seasonal_naive,0.0035180595136328143,validation
+4,mase,seasonal_naive,0.944007528786999,validation
+8,mae,seasonal_naive,0.0035180595136328143,validation
+8,mase,seasonal_naive,0.944007528786999,validation
