@@ -1,133 +1,133 @@
 model,period,horizon,scope,n_rows,n_items,mae,rmse,mase,direction_acc,category
-last_value,test,4,all,1116,12,8.7545,16.6397,1.0,,Accessories
-avg_4w,test,4,all,1116,12,9.4675,16.9761,1.0789,0.4983,Accessories
-seasonal_naive,test,4,all,1116,12,9.8934,18.7463,1.1242,0.6395,Accessories
-ets,test,4,all,1116,12,9.1702,18.6818,1.0491,0.534,Accessories
-ridge,test,4,all,1116,12,10.2897,21.1778,1.1924,0.6464,Accessories
-lasso,test,4,all,1116,12,10.244,20.935,1.1864,0.6454,Accessories
-last_value,test,8,all,1116,12,11.6891,20.8361,1.0,,Accessories
-avg_4w,test,8,all,1116,12,11.6095,20.762,0.9851,0.5468,Accessories
-seasonal_naive,test,8,all,1116,12,9.8934,18.7463,0.8656,0.6581,Accessories
-ets,test,8,all,1116,12,12.6466,27.0669,1.0689,0.546,Accessories
-ridge,test,8,all,1116,12,13.8123,31.368,1.2194,0.6716,Accessories
-lasso,test,8,all,1116,12,13.7248,30.9409,1.2109,0.6706,Accessories
-last_value,test,4,all,1569,17,7.3034,13.5444,1.0,,Aesthetics and styles
-avg_4w,test,4,all,1569,17,7.2345,12.425,0.9847,0.5625,Aesthetics and styles
-seasonal_naive,test,4,all,1569,17,11.3703,18.2524,1.8795,0.5878,Aesthetics and styles
-ets,test,4,all,1569,17,7.1066,12.8624,0.9731,0.5385,Aesthetics and styles
-ridge,test,4,all,1569,17,9.5548,17.2082,1.3502,0.5408,Aesthetics and styles
-lasso,test,4,all,1569,17,9.5189,17.087,1.3458,0.5436,Aesthetics and styles
-last_value,test,8,all,1569,17,8.8394,14.7968,1.0,,Aesthetics and styles
-avg_4w,test,8,all,1569,17,8.6322,14.1475,0.9686,0.5771,Aesthetics and styles
-seasonal_naive,test,8,all,1569,17,11.3716,18.2525,1.5325,0.5957,Aesthetics and styles
-ets,test,8,all,1569,17,8.6981,14.4493,0.9814,0.5387,Aesthetics and styles
-ridge,test,8,all,1569,17,11.6355,19.9999,1.3949,0.563,Aesthetics and styles
-lasso,test,8,all,1569,17,11.5857,19.8717,1.3898,0.5657,Aesthetics and styles
-last_value,test,4,all,930,10,8.9796,17.2534,1.0,,Bags
-avg_4w,test,4,all,930,10,10.572,19.1164,1.1803,0.4794,Bags
-seasonal_naive,test,4,all,930,10,10.9129,21.8309,1.2162,0.6097,Bags
-ets,test,4,all,930,10,9.3254,18.4884,1.0399,0.5132,Bags
-ridge,test,4,all,930,10,11.2501,21.8619,1.257,0.5558,Bags
-lasso,test,4,all,930,10,11.2254,21.7519,1.2542,0.5621,Bags
-last_value,test,8,all,930,10,13.3086,24.3676,1.0,,Bags
-avg_4w,test,8,all,930,10,13.4124,24.7019,1.0079,0.5911,Bags
-seasonal_naive,test,8,all,930,10,10.9129,21.8309,0.8203,0.6161,Bags
-ets,test,8,all,930,10,14.4375,27.6874,1.086,0.4804,Bags
-ridge,test,8,all,930,10,15.0868,32.1537,1.1326,0.6564,Bags
-lasso,test,8,all,930,10,15.0141,31.8053,1.1272,0.6516,Bags
-last_value,test,4,all,744,8,8.3038,13.0311,1.0,,Colors
-avg_4w,test,4,all,744,8,8.9099,13.1816,1.0725,0.4858,Colors
-seasonal_naive,test,4,all,744,8,15.0175,20.1868,1.8219,0.5816,Colors
-ets,test,4,all,744,8,8.2771,13.2405,0.9967,0.5318,Colors
-ridge,test,4,all,744,8,10.657,18.4235,1.2943,0.6604,Colors
-lasso,test,4,all,744,8,10.618,18.3022,1.2894,0.6575,Colors
-last_value,test,8,all,744,8,11.2016,16.261,1.0,,Colors
-avg_4w,test,8,all,744,8,11.6196,16.6467,1.031,0.4803,Colors
-seasonal_naive,test,8,all,744,8,15.0175,20.1868,1.356,0.5778,Colors
-ets,test,8,all,744,8,11.5353,17.9611,1.0234,0.5275,Colors
-ridge,test,8,all,744,8,13.8677,23.0221,1.267,0.6812,Colors
-lasso,test,8,all,744,8,13.8099,22.9036,1.2615,0.6798,Colors
-last_value,test,4,all,1302,14,8.8948,15.818,1.0,,Jeans and denim
-avg_4w,test,4,all,1302,14,10.4199,17.6771,1.1711,0.4813,Jeans and denim
-seasonal_naive,test,4,all,1302,14,12.2542,20.9811,1.3823,0.6432,Jeans and denim
-ets,test,4,all,1302,14,9.3369,16.822,1.0526,0.5422,Jeans and denim
-ridge,test,4,all,1302,14,10.9468,19.7502,1.2384,0.5806,Jeans and denim
-lasso,test,4,all,1302,14,10.9178,19.678,1.2352,0.5806,Jeans and denim
-last_value,test,8,all,1302,14,13.5814,22.5272,1.0,,Jeans and denim
-avg_4w,test,8,all,1302,14,13.9073,23.1578,1.0221,0.5297,Jeans and denim
-seasonal_naive,test,8,all,1302,14,12.2542,20.9811,0.9057,0.6698,Jeans and denim
-ets,test,8,all,1302,14,14.4903,25.9525,1.0673,0.5093,Jeans and denim
-ridge,test,8,all,1302,14,14.6226,27.193,1.0852,0.6294,Jeans and denim
-lasso,test,8,all,1302,14,14.578,27.0402,1.0819,0.6294,Jeans and denim
-last_value,test,4,all,930,10,9.6495,15.7675,1.0,,Outerwear
-avg_4w,test,4,all,930,10,11.5567,17.5739,1.1921,0.3731,Outerwear
-seasonal_naive,test,4,all,930,10,9.8591,19.1622,1.0074,0.7425,Outerwear
-ets,test,4,all,930,10,9.6777,16.3769,1.0054,0.5613,Outerwear
-ridge,test,4,all,930,10,11.1068,19.5796,1.1428,0.6552,Outerwear
-lasso,test,4,all,930,10,11.0824,19.5095,1.1404,0.6564,Outerwear
-last_value,test,8,all,930,10,14.9183,22.6289,1.0,,Outerwear
-avg_4w,test,8,all,930,10,15.5212,23.1658,1.0378,0.4589,Outerwear
-seasonal_naive,test,8,all,930,10,9.8591,19.1622,0.6567,0.7975,Outerwear
-ets,test,8,all,930,10,15.6534,24.6265,1.0499,0.486,Outerwear
-ridge,test,8,all,930,10,14.1416,25.5373,0.9446,0.7183,Outerwear
-lasso,test,8,all,930,10,14.1125,25.4136,0.9426,0.7172,Outerwear
-last_value,test,4,all,1023,11,8.9022,16.4712,1.0,,Patterns and materials
-avg_4w,test,4,all,1023,11,9.054,15.312,1.0119,0.4734,Patterns and materials
-seasonal_naive,test,4,all,1023,11,12.4721,20.1565,1.431,0.592,Patterns and materials
-ets,test,4,all,1023,11,9.4074,18.8185,1.0515,0.5186,Patterns and materials
-ridge,test,4,all,1023,11,9.8675,19.5953,1.1221,0.6411,Patterns and materials
-lasso,test,4,all,1023,11,9.8235,19.4041,1.1165,0.6444,Patterns and materials
-last_value,test,8,all,1023,11,10.912,17.488,1.0,,Patterns and materials
-avg_4w,test,8,all,1023,11,10.882,17.2124,0.9944,0.4927,Patterns and materials
-seasonal_naive,test,8,all,1023,11,12.4721,20.1565,1.1649,0.631,Patterns and materials
-ets,test,8,all,1023,11,11.8208,20.5609,1.0772,0.4953,Patterns and materials
-ridge,test,8,all,1023,11,12.3248,23.348,1.1633,0.6344,Patterns and materials
-lasso,test,8,all,1023,11,12.2723,23.1186,1.1575,0.6333,Patterns and materials
-last_value,test,4,all,1302,14,9.0223,15.2483,1.0,,Shoes
-avg_4w,test,4,all,1302,14,10.2421,16.2542,1.1362,0.4626,Shoes
-seasonal_naive,test,4,all,1302,14,12.9286,20.5377,1.5232,0.6508,Shoes
-ets,test,4,all,1302,14,9.1776,15.735,1.024,0.5182,Shoes
-ridge,test,4,all,1302,14,11.3989,20.2884,1.2958,0.623,Shoes
-lasso,test,4,all,1302,14,11.3495,20.142,1.2899,0.623,Shoes
-last_value,test,8,all,1302,14,13.1582,20.4526,1.0,,Shoes
-avg_4w,test,8,all,1302,14,13.4614,20.8568,1.0214,0.5172,Shoes
-seasonal_naive,test,8,all,1302,14,12.9286,20.5377,1.0394,0.7142,Shoes
-ets,test,8,all,1302,14,13.5299,22.1616,1.0292,0.5096,Shoes
-ridge,test,8,all,1302,14,15.0072,27.787,1.1834,0.6752,Shoes
-lasso,test,8,all,1302,14,14.9357,27.5415,1.1774,0.6736,Shoes
-last_value,test,4,all,1116,12,8.9023,17.2908,1.0,,Skirts and dresses
-avg_4w,test,4,all,1116,12,9.8327,18.2505,1.117,0.4954,Skirts and dresses
-seasonal_naive,test,4,all,1116,12,9.6478,20.0854,1.0849,0.6978,Skirts and dresses
-ets,test,4,all,1116,12,9.3398,19.8346,1.0471,0.5642,Skirts and dresses
-ridge,test,4,all,1116,12,10.2404,20.6504,1.1695,0.6193,Skirts and dresses
-lasso,test,4,all,1116,12,10.2155,20.5249,1.1666,0.6182,Skirts and dresses
-last_value,test,8,all,1116,12,12.3378,22.583,1.0,,Skirts and dresses
-avg_4w,test,8,all,1116,12,12.7061,22.9361,1.0301,0.5189,Skirts and dresses
-seasonal_naive,test,8,all,1116,12,9.6478,20.0854,0.7826,0.7324,Skirts and dresses
-ets,test,8,all,1116,12,13.6045,28.3418,1.1019,0.4955,Skirts and dresses
-ridge,test,8,all,1116,12,13.4244,28.5133,1.0922,0.6991,Skirts and dresses
-lasso,test,8,all,1116,12,13.3667,28.2135,1.0874,0.6991,Skirts and dresses
-last_value,test,4,all,1302,14,9.5768,16.9088,1.0,,Tops and knitwear
-avg_4w,test,4,all,1302,14,9.7416,15.6002,1.0106,0.4386,Tops and knitwear
-seasonal_naive,test,4,all,1302,14,10.5338,18.1221,1.1024,0.6964,Tops and knitwear
-ets,test,4,all,1302,14,9.8123,18.1605,1.024,0.5295,Tops and knitwear
-ridge,test,4,all,1302,14,10.2995,19.912,1.1012,0.7232,Tops and knitwear
-lasso,test,4,all,1302,14,10.2574,19.6991,1.0958,0.724,Tops and knitwear
-last_value,test,8,all,1302,14,11.9209,17.9346,1.0,,Tops and knitwear
-avg_4w,test,8,all,1302,14,11.9802,17.6792,1.0002,0.4707,Tops and knitwear
-seasonal_naive,test,8,all,1302,14,10.5338,18.1221,0.914,0.7246,Tops and knitwear
-ets,test,8,all,1302,14,12.2452,19.3637,1.0236,0.507,Tops and knitwear
-ridge,test,8,all,1302,14,11.8655,22.9842,1.0549,0.7453,Tops and knitwear
-lasso,test,8,all,1302,14,11.803,22.7276,1.0482,0.7453,Tops and knitwear
-last_value,test,4,all,1395,15,8.891,15.3913,1.0,,Trousers and shorts
-avg_4w,test,4,all,1395,15,9.9102,15.9804,1.1121,0.4584,Trousers and shorts
-seasonal_naive,test,4,all,1395,15,11.7211,19.767,1.3288,0.6736,Trousers and shorts
-ets,test,4,all,1395,15,8.9396,15.6398,1.007,0.5491,Trousers and shorts
-ridge,test,4,all,1395,15,10.903,20.0152,1.2391,0.6685,Trousers and shorts
-lasso,test,4,all,1395,15,10.8639,19.8844,1.2345,0.6638,Trousers and shorts
-last_value,test,8,all,1395,15,12.4882,19.9901,1.0,,Trousers and shorts
-avg_4w,test,8,all,1395,15,12.7118,20.1063,1.0081,0.4826,Trousers and shorts
-seasonal_naive,test,8,all,1395,15,11.7211,19.767,0.9447,0.7113,Trousers and shorts
-ets,test,8,all,1395,15,12.7103,21.1949,1.0097,0.5477,Trousers and shorts
-ridge,test,8,all,1395,15,13.7362,26.3945,1.1335,0.6914,Trousers and shorts
-lasso,test,8,all,1395,15,13.6825,26.1659,1.1286,0.696,Trousers and shorts
+last_value,test,4,all,1116,12,5.9462,11.6295,0.8312,,Accessories
+avg_4w,test,4,all,1116,12,7.213,13.0192,1.0,,Accessories
+seasonal_naive,test,4,all,1116,12,9.8705,17.5296,1.3689,0.6193,Accessories
+ets,test,4,all,1116,12,6.7728,14.7609,0.9382,0.6926,Accessories
+ridge,test,4,all,1116,12,7.6632,16.0452,1.0756,0.6879,Accessories
+lasso,test,4,all,1116,12,7.6165,15.7803,1.0683,0.6879,Accessories
+last_value,test,8,all,1116,12,10.1792,18.0278,0.9998,,Accessories
+avg_4w,test,8,all,1116,12,10.3869,18.2541,1.0,,Accessories
+seasonal_naive,test,8,all,1116,12,9.8705,17.5296,0.9888,0.6118,Accessories
+ets,test,8,all,1116,12,11.1751,24.0365,1.0763,0.5867,Accessories
+ridge,test,8,all,1116,12,11.217,24.6476,1.1408,0.6762,Accessories
+lasso,test,8,all,1116,12,11.152,24.2765,1.133,0.6762,Accessories
+last_value,test,4,all,1569,17,5.1342,9.7905,0.9546,,Aesthetics and styles
+avg_4w,test,4,all,1569,17,5.544,9.5264,1.0,,Aesthetics and styles
+seasonal_naive,test,4,all,1569,17,11.1192,17.1479,2.4884,0.5433,Aesthetics and styles
+ets,test,4,all,1569,17,5.0227,9.3301,0.9311,0.6372,Aesthetics and styles
+ridge,test,4,all,1569,17,6.9569,12.4915,1.3075,0.5706,Aesthetics and styles
+lasso,test,4,all,1569,17,6.9219,12.3738,1.302,0.5686,Aesthetics and styles
+last_value,test,8,all,1569,17,7.6072,12.5868,1.0239,,Aesthetics and styles
+avg_4w,test,8,all,1569,17,7.5464,11.9225,1.0,,Aesthetics and styles
+seasonal_naive,test,8,all,1569,17,11.1213,17.148,1.8215,0.5796,Aesthetics and styles
+ets,test,8,all,1569,17,7.4207,12.0975,0.9937,0.5923,Aesthetics and styles
+ridge,test,8,all,1569,17,9.8446,17.0639,1.4012,0.5819,Aesthetics and styles
+lasso,test,8,all,1569,17,9.7988,16.9349,1.3955,0.5813,Aesthetics and styles
+last_value,test,4,all,930,10,5.7874,11.64,0.7598,,Bags
+avg_4w,test,4,all,930,10,7.6083,14.3915,1.0,,Bags
+seasonal_naive,test,4,all,930,10,10.8605,20.8198,1.4286,0.5708,Bags
+ets,test,4,all,930,10,6.7284,13.7894,0.8838,0.6779,Bags
+ridge,test,4,all,930,10,8.4315,17.2356,1.1093,0.6622,Bags
+lasso,test,4,all,930,10,8.3929,17.067,1.1042,0.6622,Bags
+last_value,test,8,all,930,10,11.2196,20.8417,0.9255,,Bags
+avg_4w,test,8,all,930,10,12.1255,22.0498,1.0,,Bags
+seasonal_naive,test,8,all,930,10,10.8605,20.8198,0.8968,0.5259,Bags
+ets,test,8,all,930,10,12.2043,23.7186,1.0067,0.5766,Bags
+ridge,test,8,all,930,10,11.8202,24.4106,0.9733,0.6516,Bags
+lasso,test,8,all,930,10,11.7734,24.1529,0.9696,0.6538,Bags
+last_value,test,4,all,744,8,5.6421,8.9811,0.8513,,Colors
+avg_4w,test,4,all,744,8,6.7013,9.9104,1.0,,Colors
+seasonal_naive,test,4,all,744,8,14.8081,19.2728,2.2337,0.5543,Colors
+ets,test,4,all,744,8,5.851,9.539,0.8783,0.701,Colors
+ridge,test,4,all,744,8,7.7026,12.5373,1.1706,0.6818,Colors
+lasso,test,4,all,744,8,7.6748,12.4642,1.1662,0.6831,Colors
+last_value,test,8,all,744,8,9.5239,13.752,0.9438,,Colors
+avg_4w,test,8,all,744,8,10.1589,14.2666,1.0,,Colors
+seasonal_naive,test,8,all,744,8,14.8081,19.2728,1.4879,0.5619,Colors
+ets,test,8,all,744,8,9.8317,15.5035,0.9667,0.6486,Colors
+ridge,test,8,all,744,8,11.6358,20.1602,1.1823,0.7027,Colors
+lasso,test,8,all,744,8,11.5866,20.0324,1.177,0.7041,Colors
+last_value,test,4,all,1302,14,5.8454,10.6121,0.7734,,Jeans and denim
+avg_4w,test,4,all,1302,14,7.5864,13.2706,1.0,,Jeans and denim
+seasonal_naive,test,4,all,1302,14,12.0109,20.3111,1.5856,0.624,Jeans and denim
+ets,test,4,all,1302,14,6.575,12.4446,0.8704,0.7011,Jeans and denim
+ridge,test,4,all,1302,14,7.9653,14.6896,1.0627,0.683,Jeans and denim
+lasso,test,4,all,1302,14,7.9302,14.5956,1.0581,0.6774,Jeans and denim
+last_value,test,8,all,1302,14,11.4852,19.2836,0.9246,,Jeans and denim
+avg_4w,test,8,all,1302,14,12.4382,20.5616,1.0,,Jeans and denim
+seasonal_naive,test,8,all,1302,14,12.0109,20.3111,0.9704,0.6416,Jeans and denim
+ets,test,8,all,1302,14,12.3697,22.3371,0.9967,0.5961,Jeans and denim
+ridge,test,8,all,1302,14,11.728,21.7811,0.9521,0.6648,Jeans and denim
+lasso,test,8,all,1302,14,11.6929,21.6671,0.9494,0.6633,Jeans and denim
+last_value,test,4,all,930,10,6.1683,10.6575,0.7355,,Outerwear
+avg_4w,test,4,all,930,10,8.4449,13.2639,1.0,,Outerwear
+seasonal_naive,test,4,all,930,10,9.8828,18.5137,1.1603,0.7547,Outerwear
+ets,test,4,all,930,10,6.4135,11.5004,0.7667,0.7621,Outerwear
+ridge,test,4,all,930,10,7.9646,14.587,0.9392,0.75,Outerwear
+lasso,test,4,all,930,10,7.9405,14.5036,0.9367,0.7489,Outerwear
+last_value,test,8,all,930,10,12.5489,19.3477,0.9143,,Outerwear
+avg_4w,test,8,all,930,10,13.8132,20.5929,1.0,,Outerwear
+seasonal_naive,test,8,all,930,10,9.8828,18.5137,0.7127,0.7779,Outerwear
+ets,test,8,all,930,10,13.1689,21.0046,0.961,0.6163,Outerwear
+ridge,test,8,all,930,10,11.6557,20.5738,0.8462,0.7511,Outerwear
+lasso,test,8,all,930,10,11.634,20.4882,0.8445,0.7533,Outerwear
+last_value,test,4,all,1023,11,6.1398,11.6248,0.8634,,Patterns and materials
+avg_4w,test,4,all,1023,11,7.1488,12.0917,1.0,,Patterns and materials
+seasonal_naive,test,4,all,1023,11,12.3021,18.8421,1.7701,0.6025,Patterns and materials
+ets,test,4,all,1023,11,6.6884,14.0806,0.9336,0.7195,Patterns and materials
+ridge,test,4,all,1023,11,7.3716,14.1922,1.0468,0.7093,Patterns and materials
+lasso,test,4,all,1023,11,7.3397,14.002,1.0415,0.7114,Patterns and materials
+last_value,test,8,all,1023,11,9.6266,15.4207,1.0005,,Patterns and materials
+avg_4w,test,8,all,1023,11,9.705,14.7426,1.0,,Patterns and materials
+seasonal_naive,test,8,all,1023,11,12.3021,18.8421,1.2867,0.611,Patterns and materials
+ets,test,8,all,1023,11,10.62,19.1623,1.0973,0.6489,Patterns and materials
+ridge,test,8,all,1023,11,10.4202,19.5238,1.1084,0.6981,Patterns and materials
+lasso,test,8,all,1023,11,10.3742,19.3073,1.1027,0.6981,Patterns and materials
+last_value,test,4,all,1302,14,6.0947,10.4416,0.8099,,Shoes
+avg_4w,test,4,all,1302,14,7.5922,12.2862,1.0,,Shoes
+seasonal_naive,test,4,all,1302,14,12.6914,19.6096,1.7941,0.6595,Shoes
+ets,test,4,all,1302,14,6.4985,11.3759,0.8654,0.7043,Shoes
+ridge,test,4,all,1302,14,8.3591,14.8525,1.1448,0.6625,Shoes
+lasso,test,4,all,1302,14,8.3082,14.694,1.1378,0.664,Shoes
+last_value,test,8,all,1302,14,11.1676,17.5087,0.9434,,Shoes
+avg_4w,test,8,all,1302,14,11.8871,18.3227,1.0,,Shoes
+seasonal_naive,test,8,all,1302,14,12.6914,19.6096,1.1351,0.6912,Shoes
+ets,test,8,all,1302,14,11.5218,19.0077,0.9729,0.6114,Shoes
+ridge,test,8,all,1302,14,12.4758,22.7769,1.1002,0.6986,Shoes
+lasso,test,8,all,1302,14,12.4129,22.5593,1.0941,0.6963,Shoes
+last_value,test,4,all,1116,12,5.8378,11.7844,0.8024,,Skirts and dresses
+avg_4w,test,4,all,1116,12,7.2507,13.8087,1.0,,Skirts and dresses
+seasonal_naive,test,4,all,1116,12,9.5013,18.822,1.3101,0.6568,Skirts and dresses
+ets,test,4,all,1116,12,6.9028,15.4769,0.949,0.6803,Skirts and dresses
+ridge,test,4,all,1116,12,7.6442,16.1925,1.0645,0.6984,Skirts and dresses
+lasso,test,4,all,1116,12,7.6012,16.0064,1.0585,0.6955,Skirts and dresses
+last_value,test,8,all,1116,12,10.5031,19.4191,0.927,,Skirts and dresses
+avg_4w,test,8,all,1116,12,11.3486,20.2027,1.0,,Skirts and dresses
+seasonal_naive,test,8,all,1116,12,9.5013,18.822,0.8399,0.687,Skirts and dresses
+ets,test,8,all,1116,12,11.6958,24.8617,1.0293,0.5967,Skirts and dresses
+ridge,test,8,all,1116,12,10.422,21.4424,0.9216,0.7406,Skirts and dresses
+lasso,test,8,all,1116,12,10.3882,21.2316,0.9185,0.7379,Skirts and dresses
+last_value,test,4,all,1302,14,6.6068,11.9741,0.8676,,Tops and knitwear
+avg_4w,test,4,all,1302,14,7.6978,12.2808,1.0,,Tops and knitwear
+seasonal_naive,test,4,all,1302,14,10.4716,16.672,1.3863,0.681,Tops and knitwear
+ets,test,4,all,1302,14,6.8777,13.366,0.9018,0.7494,Tops and knitwear
+ridge,test,4,all,1302,14,7.5419,14.4717,1.0111,0.7471,Tops and knitwear
+lasso,test,4,all,1302,14,7.5084,14.2538,1.0054,0.7471,Tops and knitwear
+last_value,test,8,all,1302,14,10.4032,15.6772,1.0082,,Tops and knitwear
+avg_4w,test,8,all,1302,14,10.4422,14.9914,1.0,,Tops and knitwear
+seasonal_naive,test,8,all,1302,14,10.4716,16.672,1.047,0.6928,Tops and knitwear
+ets,test,8,all,1302,14,10.8353,17.5229,1.0442,0.6526,Tops and knitwear
+ridge,test,8,all,1302,14,9.9884,19.0982,1.0195,0.758,Tops and knitwear
+lasso,test,8,all,1302,14,9.9383,18.8546,1.0129,0.758,Tops and knitwear
+last_value,test,4,all,1395,15,6.0934,10.7203,0.8396,,Trousers and shorts
+avg_4w,test,4,all,1395,15,7.362,11.9901,1.0,,Trousers and shorts
+seasonal_naive,test,4,all,1395,15,11.5737,18.7162,1.6025,0.6445,Trousers and shorts
+ets,test,4,all,1395,15,6.3954,11.4457,0.8795,0.7193,Trousers and shorts
+ridge,test,4,all,1395,15,8.019,14.4497,1.1148,0.6963,Trousers and shorts
+lasso,test,4,all,1395,15,7.9822,14.3219,1.1095,0.6948,Trousers and shorts
+last_value,test,8,all,1395,15,10.6579,17.0429,0.9659,,Trousers and shorts
+avg_4w,test,8,all,1395,15,11.2568,17.4729,1.0,,Trousers and shorts
+seasonal_naive,test,8,all,1395,15,11.5737,18.7162,1.0528,0.6846,Trousers and shorts
+ets,test,8,all,1395,15,10.9225,18.0995,0.9774,0.6411,Trousers and shorts
+ridge,test,8,all,1395,15,11.6373,21.9105,1.0958,0.7039,Trousers and shorts
+lasso,test,8,all,1395,15,11.5909,21.7126,1.0905,0.7024,Trousers and shorts

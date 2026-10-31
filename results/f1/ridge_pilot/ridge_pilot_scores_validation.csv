@@ -1,0 +1,11 @@
+dataset,frequency,model,horizon,period,with_influencer,alpha,mase_period,n_series,mae,mase,n_predictions
+f1,weekly,ridge,4,validation,no,1.0,1,1000,0.0037004199353577035,0.9904609305360781,39000
+f1,weekly,ridge,4,validation,yes,1.0,1,1000,0.003659223995943322,0.9947913949367251,39000
+f1,weekly,last_value,4,validation,not_applicable,,1,1000,0.00403809693528054,1.0466330546264986,39000
+f1,weekly,four_week_average,4,validation,not_applicable,,1,1000,0.004205752170401001,1.0565636033251735,39000
+f1,weekly,seasonal_naive,4,validation,not_applicable,,1,1000,0.003202309711698459,0.9327287960368025,39000
+f1,weekly,ridge,8,validation,no,1.0,1,1000,0.005110115505111412,1.3645370819335823,39000
+f1,weekly,ridge,8,validation,yes,1.0,1,1000,0.005109452751208804,1.3656032008307968,39000
+f1,weekly,last_value,8,validation,not_applicable,,1,1000,0.005575380994534631,1.3970172303274213,39000
+f1,weekly,four_week_average,8,validation,not_applicable,,1,1000,0.005748888770716772,1.412109474152288,39000
+f1,weekly,seasonal_naive,8,validation,not_applicable,,1,1000,0.003202309711698459,0.9327287960368025,39000

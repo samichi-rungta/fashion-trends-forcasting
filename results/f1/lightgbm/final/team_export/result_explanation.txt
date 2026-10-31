@@ -1,0 +1,106 @@
+F1 / HERMES forecasting experiment
+
+1. What I did
+
+I evaluated whether influencer-history features improve weekly fashion
+popularity forecasts beyond popularity history and seasonality.
+
+The dataset contains 10,000 weekly popularity series from 2015 to 2019.
+I used a chronological split: 182 initial training weeks, 39 validation
+target weeks, and 40 final test target weeks.
+
+I compared last-value, trailing-four-week-average, and seasonal-naive
+baselines with LightGBM seasonal-correction models, with and without
+influencer features. LightGBM predicts a correction to the popularity
+observed 52 weeks before the target week.
+
+Inputs included popularity lags, recent averages, changes, volatility,
+calendar seasonality, and a seasonal reference. The additional-feature
+version also included influencer lags and recent summary statistics.
+
+I compared 300, 500, and 1,000 boosting iterations on validation data.
+The popularity-only validation results selected 1,000 iterations at
+both horizons. The same settings were used for both influencer versions.
+
+Models were retrained every four forecast weeks using an expanding
+history. Training labels were included only when their target dates
+were available by the refit date. Predictions were clipped at zero.
+Hyperparameters were fixed before final test evaluation.
+
+2. What I found
+
+LightGBM outperformed the evaluated baselines overall on the final test
+period. Seasonal naive was the strongest baseline.
+
+At four weeks, MAE was approximately 0.003018 without influencers and
+0.003014 with influencers, compared with 0.003596 for seasonal naive.
+
+At eight weeks, MAE was approximately 0.003212 without influencers and
+0.003202 with influencers, compared with 0.003596 for seasonal naive.
+
+Adding influencer features reduced overall test MAE by 0.1481% at four
+weeks and 0.3120% at eight weeks. Paired moving-block bootstrap intervals
+included zero at both horizons for all three tested block lengths
+(4, 8, and 13 weeks). Therefore, the test results did not establish a
+statistically reliable additional benefit from influencer features.
+
+Category-level results varied. Pants, dresses, and skirts showed
+positive point estimates in validation and test at both horizons.
+These category findings are descriptive; category-specific statistical
+reliability was not established.
+
+Popularity history and seasonal-reference features accounted for most
+of the model's training gain. Influencer features contributed a smaller
+share. Training-gain importance does not establish out-of-sample
+accuracy improvements or causal influence.
+
+A retrospective error analysis found higher errors during large weekly
+changes. In that group, seasonal naive slightly outperformed LightGBM.
+LightGBM's overall advantage was concentrated in the other observations.
+Large changes were defined using each series' training-period 90th
+percentile of absolute weekly changes.
+
+3. Metric and export definitions
+
+MAE is measured in normalized popularity units.
+
+mase_train_m1 is the average across series of each series' MAE divided
+by its initial training-period mean absolute weekly change.
+
+relative_mae_vs_four_week_average is overall model MAE divided by the
+four-week-average baseline's MAE on the same evaluation observations.
+It is reported separately from mase_train_m1.
+
+In the team predictions export, date is the forecast-origin week.
+target_date is the predicted week. last4_avg is the average of the
+four observed weeks up to and including the forecast origin.
+
+F1 actual and predicted values refer to a single target week at t+4
+or t+8. They differ from the four-week-average target used in the
+Google Trends experiment.
+
+4. Limitations and interpretation
+
+This dataset predates 2020 and cannot establish how influencer signals
+perform in the current TikTok or Instagram environment.
+
+The final test period contains only 40 target weeks. The many series
+do not provide 400,000 independent time observations. Bootstrap
+intervals describe uncertainty under the chosen resampling procedure.
+
+The series use anonymous identifiers, limiting direct alignment with
+named Google Trends styles. Some influencer histories are duplicated
+across series, so the influencer inputs are not all independent signals.
+
+This experiment measures predictive associations, not causal effects
+of influencers. A small or uncertain incremental improvement does not
+prove that influencers have no value.
+
+LightGBM was the strongest evaluated final-test model in this experiment.
+XGBoost was not evaluated here, so these results do not establish that
+LightGBM would outperform XGBoost.
+
+The F1 experiment supports the wider project by testing the incremental
+value of social signals. Its different dates, target definition, and
+measurement scale limit direct numerical comparisons with Google
+Trends and VISUELLE results.

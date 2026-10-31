@@ -261,9 +261,9 @@ These come from the analysis cell at the end of the notebook and are preliminary
 
 ### Modelling results from the prepared dataset
 
-The modelling notebook used 137 keywords, retained 3 emerging styles, identified 6 weak stitches and flagged 10 spike weeks. On the full test period, the best baseline is `last_value` at 4 weeks (MAE 8.80), while `seasonal_naive` is best at 8 weeks (MAE 11.45). ETS is the best of the fitted simpler models, but is worse than those baselines: MAE 9.00 at 4 weeks and 12.71 at 8 weeks. Removing spike weeks lowers errors substantially, especially at 4 weeks, but does not produce a consistent fitted-model advantage at both horizons. These results suggest using the simple baselines as the primary benchmark and treating the spike-adjusted results as a sensitivity analysis.
+The modelling notebook evaluates four-week average targets using the shared forecast-origin format. It used 137 keywords, retained 3 emerging styles, identified 6 weak stitches and flagged 10 spike weeks. On the full test period, `last_value` is the strongest baseline at both horizons: MAE 5.93 at 4 weeks and 10.37 at 8 weeks. ETS is the best of the fitted simpler models, but is worse than that baseline: MAE 6.40 at 4 weeks and 10.95 at 8 weeks. Removing spike weeks produces nearly the same ranking and only negligible differences, so the simple baseline remains the primary benchmark and the spike-adjusted results are a sensitivity analysis.
 
-The selected regularisation settings were Lasso `alpha=0.0001` and Ridge `alpha=0.01` for both horizons. The largest horizon-4 Ridge features were `style_rel_mom_4`, `mom_4`, `lag_0`, `style_rel` and `market_mom_4`. These are predictive associations, not causal effects.
+The selected regularisation settings were Lasso `alpha=0.0001` and Ridge `alpha=0.01` for both horizons. The largest horizon-4 Ridge features were `style_rel_mom_4`, `lag_0`, `mom_4`, `market_mom_4` and `style_rel`. These are predictive associations, not causal effects.
 
 ---
 
