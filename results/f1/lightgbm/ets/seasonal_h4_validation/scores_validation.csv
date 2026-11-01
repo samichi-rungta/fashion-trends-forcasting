@@ -1,0 +1,2 @@
+model,with_influencer,horizon,period,mae,mase_train_m1,relative_mae_vs_four_week_average,n_predictions,n_series,n_series_mase
+ets_additive_seasonal,not_applicable,4,validation,0.002857313024412867,0.7751154901777723,0.6109178769926201,390000,10000,10000

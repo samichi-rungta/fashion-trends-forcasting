@@ -1,0 +1,15 @@
+{
+  "candidate": "seasonal",
+  "selection_metric": "validation MAE",
+  "horizons": [
+    4,
+    8
+  ],
+  "settings": {
+    "trend": null,
+    "seasonal": "add",
+    "seasonal_periods": 52,
+    "initialization_method": "estimated"
+  },
+  "refit_every": 4
+}

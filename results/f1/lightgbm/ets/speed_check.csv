@@ -1,0 +1,11 @@
+candidate,item,seconds,status
+seasonal,jp_male_top_184,0.01992979203350842,ok
+seasonal,eu_female_pants_101,0.03016562497941777,ok
+seasonal,jp_female_shoes_147,0.021508000034373254,ok
+seasonal,br_female_top_137,0.01641958300024271,ok
+seasonal,eu_female_pants_43,0.04287445900263265,ok
+trend_seasonal,jp_male_top_184,0.14389358297921717,ok
+trend_seasonal,eu_female_pants_101,0.07345854101004079,ok
+trend_seasonal,jp_female_shoes_147,0.061779458017554134,ok
+trend_seasonal,br_female_top_137,0.05368374998215586,ok
+trend_seasonal,eu_female_pants_43,0.09935429197503254,ok
