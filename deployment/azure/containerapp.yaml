@@ -1,0 +1,37 @@
+# Azure Container Apps settings for the rankings app.
+# Apply from the repository root:
+#   az containerapp update --name fashion-trends-api --resource-group rg-fashion-trends --yaml deployment/azure/containerapp.yaml
+properties:
+  template:
+    containers:
+      - name: fashion-trends-api
+        image: ghcr.io/samichi-rungta/fashion-trends-forcasting/fashion-trends-api:latest
+        resources:
+          cpu: 0.5
+          memory: 1Gi
+        env:
+          - name: RISING_THRESHOLD
+            value: "1.2"
+        probes:
+          - type: Startup
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 3
+            failureThreshold: 10
+          - type: Readiness
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 10
+            failureThreshold: 3
+          - type: Liveness
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 30
+            failureThreshold: 3
+    scale:
+      minReplicas: 0
+      maxReplicas: 2

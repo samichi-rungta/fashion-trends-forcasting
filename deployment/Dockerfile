@@ -13,6 +13,10 @@ WORKDIR /srv
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Commit ID of the code, passed in by the CI pipeline; shown by /health and in the logs.
+ARG APP_VERSION=dev
+ENV APP_VERSION=$APP_VERSION
+
 # Copy the app and the rankings file.
 COPY app ./app
 COPY data ./data
@@ -21,6 +25,6 @@ COPY data ./data
 RUN useradd --create-home appuser
 USER appuser
 
-# The app listens on port 8000.
+# The app listens on port 8000. The app logs each request itself, so uvicorn's own access log is off.
 EXPOSE 8000
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
