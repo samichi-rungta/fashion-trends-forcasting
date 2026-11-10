@@ -1,7 +1,11 @@
 # CI/CD pipeline for the deployment app.
 # CI (every push and pull request): run the tests, build the Docker image, start it and check it answers.
-# CD (only on the default branch): publish the image to GitHub Container Registry,
-# ready for Azure or AWS to pull.
+# CD (only on the default branch): publish the image to GitHub Container Registry, deploy it to
+# Azure Container Apps and check that the live app serves the new version.
+#
+# Azure sign-in uses OpenID Connect: GitHub proves its identity with a short-lived token, so no
+# Azure password is stored anywhere. The repository secrets AZURE_CLIENT_ID, AZURE_TENANT_ID and
+# AZURE_SUBSCRIPTION_ID name the managed identity that is allowed to deploy (see deployment/README.md).
 
 name: Deployment CI
 
@@ -48,7 +52,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Build the Docker image
-        run: docker build -t fashion-trends-api:ci deployment
+        run: docker build --build-arg APP_VERSION="${GITHUB_SHA::7}" -t fashion-trends-api:ci deployment
 
       - name: Start the container and check it responds
         run: |
@@ -76,3 +80,56 @@ jobs:
           docker push "$IMAGE:${GITHUB_SHA::7}"
           docker push "$IMAGE:latest"
           echo "Published $IMAGE:${GITHUB_SHA::7}" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    needs: build # only deploy an image that passed the tests and the container check
+    if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    runs-on: ubuntu-latest
+    concurrency: azure-production # never run two deployments at the same time
+    permissions:
+      contents: read
+      id-token: write # needed to request the short-lived sign-in token for Azure
+    env:
+      AZURE_RESOURCE_GROUP: rg-fashion-trends
+      AZURE_CONTAINER_APP: fashion-trends-api
+    steps:
+      - name: Sign in to Azure (no stored password)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy the new image to Azure Container Apps
+        run: |
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY,,}/fashion-trends-api:${GITHUB_SHA::7}"
+          az extension add --name containerapp --upgrade --only-show-errors
+          az containerapp update \
+            --name "$AZURE_CONTAINER_APP" \
+            --resource-group "$AZURE_RESOURCE_GROUP" \
+            --image "$IMAGE" \
+            --only-show-errors --output none
+          echo "Deployed $IMAGE" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check the live app serves the new version
+        run: |
+          VERSION="${GITHUB_SHA::7}"
+          FQDN=$(az containerapp show --name "$AZURE_CONTAINER_APP" --resource-group "$AZURE_RESOURCE_GROUP" \
+            --query properties.configuration.ingress.fqdn -o tsv)
+          URL="https://$FQDN"
+          # The new version can take a few minutes to start, and the app may be waking up from zero copies.
+          for i in $(seq 1 30); do
+            LIVE=$(curl -fs --max-time 20 "$URL/health" | jq -r .version || true)
+            if [ "$LIVE" = "$VERSION" ]; then break; fi
+            echo "Live version: ${LIVE:-no answer}; waiting for $VERSION ($i/30)"
+            sleep 10
+          done
+          if [ "$LIVE" != "$VERSION" ]; then
+            echo "The live app did not switch to version $VERSION"
+            exit 1
+          fi
+          curl -fs "$URL/health"
+          echo
+          curl -fs "$URL/rankings?horizon=4&top_k=5"
+          echo
+          echo "Live at $URL (version $VERSION)" >> "$GITHUB_STEP_SUMMARY"
