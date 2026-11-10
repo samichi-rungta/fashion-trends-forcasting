@@ -85,6 +85,7 @@ jobs:
     needs: build # only deploy an image that passed the tests and the container check
     if: github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
     runs-on: ubuntu-latest
+    timeout-minutes: 30 # never let a stuck deployment run for hours
     concurrency: azure-production # never run two deployments at the same time
     permissions:
       contents: read
@@ -117,14 +118,15 @@ jobs:
           FQDN=$(az containerapp show --name "$AZURE_CONTAINER_APP" --resource-group "$AZURE_RESOURCE_GROUP" \
             --query properties.configuration.ingress.fqdn -o tsv)
           URL="https://$FQDN"
-          # The new version can take a few minutes to start, and the app may be waking up from zero copies.
-          for i in $(seq 1 30); do
+          # Pulling the image can take several minutes before the new version starts.
+          for i in $(seq 1 60); do
             LIVE=$(curl -fs --max-time 20 "$URL/health" | jq -r .version || true)
             if [ "$LIVE" = "$VERSION" ]; then break; fi
-            echo "Live version: ${LIVE:-no answer}; waiting for $VERSION ($i/30)"
+            echo "Live version: ${LIVE:-no answer}; waiting for $VERSION ($i/60)"
             sleep 10
           done
           if [ "$LIVE" != "$VERSION" ]; then
+            az containerapp revision list --name "$AZURE_CONTAINER_APP" --resource-group "$AZURE_RESOURCE_GROUP" -o table
             echo "The live app did not switch to version $VERSION"
             exit 1
           fi
