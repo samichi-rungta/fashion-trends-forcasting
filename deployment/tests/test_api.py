@@ -1,10 +1,13 @@
 """Automatic checks for the API. Run from the deployment/ folder:
     python -m pytest -v
 """
+import logging
+
 import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
+import app.main as main
 from app.data import check_rankings
 from app.main import app
 
@@ -59,6 +62,31 @@ def test_style_lookup_ignores_capitals():
     assert response.status_code == 200
     assert response.json()["style"] == "ballet flats"
     assert client.get("/styles/not-a-style").status_code == 404
+
+
+def test_health_reports_the_code_version():
+    assert client.get("/health").json()["version"] == main.APP_VERSION
+
+
+def test_requests_are_logged(caplog):
+    with caplog.at_level(logging.INFO, logger="fashion_trends"):
+        client.get("/rankings")
+        client.get("/rankings", params={"horizon": 6})
+    messages = [r.getMessage() for r in caplog.records]
+    assert any("path=/rankings status=200" in m for m in messages)
+    assert any("path=/rankings status=422" in m for m in messages)
+
+
+def test_unexpected_error_returns_500_and_is_logged(monkeypatch, caplog):
+    def broken(*args, **kwargs):
+        raise RuntimeError("simulated failure")
+
+    monkeypatch.setattr(main, "get_rankings", broken)
+    with caplog.at_level(logging.ERROR, logger="fashion_trends"):
+        response = TestClient(app, raise_server_exceptions=False).get("/rankings")
+    assert response.status_code == 500
+    assert response.json() == {"detail": "Internal server error"}
+    assert any("error method=GET path=/rankings" in r.getMessage() for r in caplog.records)
 
 
 def test_home_page_shows_a_table():
