@@ -33,5 +33,7 @@ properties:
             periodSeconds: 30
             failureThreshold: 3
     scale:
-      minReplicas: 0
+      # One copy always runs: pulling the image takes several minutes, longer than
+      # Azure's 5-minute idle shutdown, so scaling to zero left the app unable to start.
+      minReplicas: 1
       maxReplicas: 2
