@@ -16,12 +16,16 @@ for reference.
 
 | File | Purpose |
 | --- | --- |
-| `app/main.py` | The FastAPI app: buyer page, API endpoints, request logging and error handling |
+| `app/main.py` | The FastAPI app: API endpoints, request logging and error handling |
+| `app/page.py` | The buyer page: KPI bar, item cards and table, item details, order plan |
+| `app/pictures.py` | Original drawings for every item (no copyrighted photos) |
 | `app/data.py` | Loads the rankings file and checks its format |
 | `data/rankings.csv` | Real rankings from the LightGBM model |
+| `data/search_history.csv` | Weekly search interest per style, for the chart in the item details (optional) |
+| `data/explanations.csv` | SHAP contributions for every forecast, for the item details (optional) |
 | `data/rankings_fake.csv` | Fake rankings: 55 example styles, 6 weeks, horizons 4 and 8 |
 | `scripts/make_fake_rankings.py` | Recreates the fake file |
-| `tests/test_api.py` | Automatic checks (18 tests) |
+| `tests/test_api.py` | Automatic checks (30 tests) |
 | `Dockerfile` | Recipe for the container image |
 | `azure/containerapp.yaml` | Azure settings: resources, environment variables, health probes, scaling |
 | `../.github/workflows/deployment-ci.yml` | CI/CD pipeline on GitHub Actions |
@@ -30,11 +34,11 @@ for reference.
 
 | Address | Returns |
 | --- | --- |
-| `/` | Buyer page: ranked table with week and horizon pickers |
+| `/` | Buyer page: KPI bar, every item as a card or in a sortable table, item details on click, and an order plan exported as CSV |
 | `/docs` | Interactive API documentation (made by FastAPI) |
 | `/health` | `{"status": "ok", "version": ..., "rows": ..., "weeks": ...}`; used by the pipeline and Azure |
 | `/weeks` | Forecast weeks in the file, newest first |
-| `/rankings?horizon=4&top_k=10&week=2026-10-11&category=Shoes` | Top styles; all parameters optional |
+| `/rankings?horizon=4&top_k=10&week=2026-10-11&category=Shoes` | Top styles with growth, growth vs market and alert; plus the week's market growth and whether alerts are held back. All parameters optional |
 | `/styles/{style}` | Every forecast for one style, e.g. `/styles/ballet flats` |
 
 `version` in `/health` is the commit ID the running image was built from
@@ -45,7 +49,8 @@ for reference.
 | Variable | Default | Meaning |
 | --- | --- | --- |
 | `RANKINGS_PATH` | `data/rankings.csv` | Rankings file to serve |
-| `RISING_THRESHOLD` | `1.1` (live app: `1.2`) | Predicted growth above which a style is flagged as rising |
+| `RISING_THRESHOLD` | `1.2` | Predicted growth above which a style is flagged as rising; must match the threshold used to make the file's `alert` column |
+| `ORDER_LEAD_WEEKS` | `6` | Supplier lead time in weeks, used by the order window and the ordering bar |
 | `LOG_LEVEL` | `INFO` | `DEBUG` also logs every `/health` call |
 | `APP_VERSION` | `dev` | Set automatically by the pipeline when the image is built |
 
@@ -85,15 +90,45 @@ The file needs these columns (extra columns are fine):
 | `predicted_growth` | Forecast average ÷ last 4-week average (1.0 = no change) |
 | `rank` | 1 = highest expected growth, within each week and horizon |
 
+Optional columns, made by the modelling code (the app works them out if they are missing):
+
+| Column | Meaning |
+| --- | --- |
+| `market_growth` | Average predicted growth of all styles in that week and horizon |
+| `growth_vs_market` | `predicted_growth` ÷ `market_growth`; above 1 = expected to beat the market |
+| `inputs_out_of_range` | The market's recent growth was outside the training range, so alerts are held back |
+| `alert` | The rising alert: growth above the threshold in a week that is not out of range |
+
 The app refuses to start if the file breaks the format (missing columns,
-horizon not 4 or 8, ranks not 1..n, duplicates), so problems show up in the
-pipeline, not in front of users.
+horizon not 4 or 8, ranks not 1..n, duplicates), or if the file's `alert`
+column does not match the app's `RISING_THRESHOLD`. The alerts a buyer sees
+therefore always follow the same rule as in the modelling code, and problems
+show up in the pipeline, not in front of users.
+
+## The buyer page
+
+- **KPI bar**: overall market trend, number of items expected to grow above the rising threshold,
+  the category with the highest average growth, and the factory order window for the supplier lead time.
+- **Actions** for every item: *Stock up* (the model's rising alert), *Check first* (a rise forecast in a
+  week whose inputs were outside the training range), *Consider* (growth of 5% or more), *Keep steady*
+  (within 5%) and *Hold off* (a fall of more than 5%).
+- **Cards or table**: the table sorts by rank, style, category, predicted growth, alpha vs. market
+  (`growth_vs_market` − 1) or action.
+- **Item details**: a plain-language explanation; the last 8 weeks of searches with the forecast average
+  (and, for past forecasts, what actually happened); a SHAP breakdown of what pushed the forecast up or down;
+  and an ordering bar comparing the lead time with the forecast window.
+- **Order plan**: add items, set units and export a CSV. The plan is kept in the viewer's browser only.
+
+`search_history.csv` and `explanations.csv` are made by `analysis/export_app_data.py` from the same
+prepared series and a rebuilt LightGBM model (retrained every 4 weeks, averaged over 5 seeds); the
+explained forecasts match the live ones with a correlation of 0.9995. Rerun it whenever `rankings.csv`
+changes. Without these files the page still works, without the chart and the SHAP breakdown.
 
 ## The pipeline
 
 On every push or pull request that touches `deployment/` or the workflow file:
 
-1. **test**: installs packages and runs the 18 tests.
+1. **test**: installs packages and runs the 30 tests.
 2. **build** (only if tests pass): builds the Docker image stamped with the
    commit ID, starts it, and calls `/health` and `/rankings`. A failure here
    shows the container logs. On `main` only, it then pushes the image to GitHub
@@ -229,6 +264,6 @@ az group delete --name rg-fashion-trends --yes
 
 ## Not done yet (remaining work)
 
-- Retrained model and the "growth relative to the market" column.
-- Automatic weekly update of the rankings file.
-- The forecast curve per style and the ordering window from the proposal.
+- Automatic weekly update: fetch new searches, rerun the model, rebuild `rankings.csv`, then rerun
+  `analysis/export_app_data.py` so the item details stay in step.
+
