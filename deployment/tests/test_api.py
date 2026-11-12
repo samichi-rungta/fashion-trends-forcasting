@@ -125,6 +125,32 @@ def test_home_page_category_filter():
     assert "Outerwear" not in table  # only shoes in the table
 
 
+def test_ordering_window_and_lead_time():
+    data = client.get("/rankings", params={"top_k": 5, "horizon": 4, "lead_time_weeks": 4}).json()
+    assert data["lead_time_weeks"] == 4
+    assert "target_week" in data
+    assert "order_deadline" in data
+    for s in data["styles"]:
+        assert "target_week" in s
+        assert "order_deadline" in s
+        assert "ordering_urgency" in s
+        assert "ordering_action" in s
+
+
+def test_style_view_html_page():
+    response = client.get("/style-view", params={"style": "ballet flats", "horizon": 4, "lead_time_weeks": 4})
+    assert response.status_code == 200
+    assert "Ballet Flats" in response.text
+    assert "<svg" in response.text
+    assert "Ordering Window" in response.text
+
+
+def test_style_format_html_parameter():
+    response = client.get("/styles/ballet flats", params={"format": "html"})
+    assert response.status_code == 200
+    assert "<!doctype html>" in response.text
+
+
 # Checks on the file format itself, so a broken results file is caught before deployment.
 def make_file():
     return pd.DataFrame({
