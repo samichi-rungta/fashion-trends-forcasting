@@ -1,6 +1,7 @@
 """Automatic checks for the API. Run from the deployment/ folder:
     python -m pytest -v
 """
+import json
 import logging
 
 import pandas as pd
@@ -8,7 +9,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 import app.main as main
-from app.data import check_rankings
+from app.data import add_market_columns, check_rankings
 from app.main import app
 
 client = TestClient(app)
@@ -36,10 +37,29 @@ def test_top_k_limits_the_number_of_styles():
     assert data["horizon"] == 8
 
 
-def test_rising_flag_matches_threshold():
+def test_rising_flag_matches_threshold_and_market_flag():
+    for week in client.get("/weeks").json()["weeks"][:40]:
+        data = client.get("/rankings", params={"top_k": 200, "week": week}).json()
+        for s in data["styles"]:
+            above = s["predicted_growth"] > data["rising_threshold"]
+            assert s["rising"] == (above and not data["alerts_held_back"])
+            assert s["held_back"] == (above and data["alerts_held_back"])
+
+
+def test_flagged_weeks_hold_back_all_alerts():
+    flagged = main.RANKINGS.loc[main.RANKINGS["inputs_out_of_range"], "week"].unique()
+    if len(flagged) == 0:
+        pytest.skip("this rankings file has no out-of-range weeks")
+    data = client.get("/rankings", params={"week": flagged[0], "top_k": 200}).json()
+    assert data["alerts_held_back"] is True
+    assert data["rising_count"] == 0
+    assert "Unusual market week" in client.get("/", params={"week": flagged[0]}).text
+
+
+def test_market_columns_are_consistent():
     data = client.get("/rankings", params={"top_k": 200}).json()
     for s in data["styles"]:
-        assert s["rising"] == (s["predicted_growth"] > data["rising_threshold"])
+        assert s["growth_vs_market"] == pytest.approx(s["predicted_growth"] / data["market_growth"], rel=1e-3)
 
 
 def test_category_filter_keeps_only_that_category():
@@ -89,10 +109,20 @@ def test_unexpected_error_returns_500_and_is_logged(monkeypatch, caplog):
     assert any("error method=GET path=/rankings" in r.getMessage() for r in caplog.records)
 
 
-def test_home_page_shows_a_table():
-    response = client.get("/")
-    assert response.status_code == 200
-    assert "<table>" in response.text
+def test_home_page_shows_kpis_cards_and_table():
+    page = client.get("/").text
+    assert "What to stock for the next 4 weeks" in page
+    for kpi in ("Overall market trend", "High-conviction breakouts", "Leading category", "Factory order window"):
+        assert kpi in page
+    assert 'class="grid"' in page and '<table id="table">' in page
+
+
+def test_home_page_category_filter():
+    page = client.get("/", params={"category": "Shoes", "horizon": 8}).text
+    assert "What to stock for the next 8 weeks" in page
+    table = page.split('<tbody id="rows">')[1].split("</tbody>")[0]
+    assert table.count("<tr") > 0
+    assert "Outerwear" not in table  # only shoes in the table
 
 
 # Checks on the file format itself, so a broken results file is caught before deployment.
@@ -107,6 +137,26 @@ def test_good_file_passes_check():
     check_rankings(make_file())
 
 
+def test_alerts_made_with_another_threshold_are_rejected():
+    # The file's alerts must follow the app's threshold; a mismatch stops the app from starting.
+    df = pd.DataFrame({
+        "week": ["2026-01-04"] * 2, "style": ["a", "b"], "horizon": [4, 4],
+        "predicted_growth": [1.15, 0.9], "inputs_out_of_range": [False, False],
+        "alert": [True, False],  # made with threshold 1.1
+    })
+    with pytest.raises(ValueError, match="does not match"):
+        add_market_columns(df, threshold=1.2)
+    assert add_market_columns(df, threshold=1.1)["rising"].tolist() == [True, False]
+
+
+def test_files_without_market_columns_still_work():
+    df = pd.DataFrame({"week": ["2026-01-04"] * 2, "style": ["a", "b"], "horizon": [4, 4],
+                       "predicted_growth": [1.3, 0.9]})
+    out = add_market_columns(df, threshold=1.2)
+    assert out["market_growth"].tolist() == pytest.approx([1.1, 1.1])
+    assert out["rising"].tolist() == [True, False]
+
+
 @pytest.mark.parametrize("change, message", [
     (lambda df: df.drop(columns="rank"), "missing columns"),
     (lambda df: df.assign(horizon=[4, 6]), "Horizon"),
@@ -117,3 +167,58 @@ def test_good_file_passes_check():
 def test_bad_files_are_rejected(change, message):
     with pytest.raises(ValueError, match=message):
         check_rankings(change(make_file()))
+
+
+# Item details: the search history and SHAP explanations must match the rankings they describe.
+def page_items(**params):
+    page = client.get("/", params=params).text
+    return json.loads(page.split('<script id="page-data" type="application/json">')[1].split("</script>")[0])
+
+
+def test_explanations_cover_every_forecast():
+    if main.EXPLANATIONS is None:
+        pytest.skip("no explanations file")
+    keys = set(main.EXPLANATIONS.index)
+    missing = [k for k in main.RANKINGS[["week", "style", "horizon"]].itertuples(index=False, name=None) if k not in keys]
+    assert not missing, f"{len(missing)} forecasts have no explanation, e.g. {missing[:3]}"
+
+
+def test_history_covers_every_style():
+    if main.HISTORY is None:
+        pytest.skip("no search history file")
+    assert set(main.RANKINGS["style"]) <= set(main.HISTORY.columns)
+
+
+def test_item_details_add_up():
+    data = page_items()
+    item = data["items"][0]
+    assert item["rank"] == 1 and item["label"]
+    if "shap" in item:
+        # SHAP contributions multiply up to the forecast (small differences from averaging over seeds).
+        total = (1 + item["shap"]["base"])
+        for g in ("recent_level", "momentum", "season", "market", "category"):
+            total *= 1 + item["shap"][g]
+        assert total == pytest.approx(item["g"], rel=0.05)
+    if "hist" in item:
+        assert len(item["hist"]) == 8 and item["fc"] > 0
+
+
+def test_page_works_without_detail_files():
+    from app import page
+    data = main.get_rankings(None, 4, 200, None)
+    rows = main.RANKINGS[(main.RANKINGS["week"] == data["week"]) & (main.RANKINGS["horizon"] == 4)]
+    html = page.render(data, rows, rows, rows, main.WEEKS, main.CATEGORIES, None, "test")
+    assert '"shap"' not in html and '"hist"' not in html and "What to stock" in html
+
+
+@pytest.mark.parametrize("lead, horizon, text", [(6, 4, "misses this 4-week window"), (6, 8, "last 2 of the 8")])
+def test_order_window_kpi(monkeypatch, lead, horizon, text):
+    monkeypatch.setenv("ORDER_LEAD_WEEKS", str(lead))
+    assert text in client.get("/", params={"horizon": horizon}).text
+
+
+def test_every_item_has_its_own_picture():
+    from app.pictures import picture
+    styles = main.RANKINGS[["style", "category"]].drop_duplicates()
+    pictures = {picture(s, c) for s, c in styles.itertuples(index=False)}
+    assert len(pictures) == len(styles)
