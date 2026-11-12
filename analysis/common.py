@@ -25,6 +25,7 @@ BASELINE_FILE = RESULTS / "predictions.csv"         # baselines, ETS, Ridge, Las
 KEYWORD_FILE = RESULTS / "keyword_info.csv"         # category of every style
 SPIKE_FILE = RESULTS / "spike_weeks.csv"            # weeks flagged as market-wide spikes
 WEEKLY_FILE = RESULTS / "trends_weekly_prepared.csv"  # weekly search interest, for checks
+FLAG_FILE = RESULTS / "predictions_lightgbm_logistic_flagged.csv"  # out-of-range flag per forecast
 
 # The baseline file follows the agreed format (date = week the forecast was made,
 # 4-week averages, last4_avg). Set to True only for an older version that used
@@ -35,6 +36,10 @@ BASELINE_NEEDS_CONVERSION = False
 RISING_THRESHOLD = 1.2      # team decision, chosen on the validation years
 PERIOD = "test"             # analyse the final test only (January 2025 onwards)
 MAIN_MODEL = "lightgbm"
+# The same LightGBM forecasts, but with alerts held back when the market's 4-week growth
+# was outside the range seen in training. Added as a second model, so every table shows
+# LightGBM without and with the flag side by side.
+FLAGGED_MODEL = "lightgbm_flagged"
 BASELINES = ["last_value", "seasonal_naive"]   # avg_4w never says "rising", so it is left out of comparisons
 
 DATA_LABEL = "FAKE data" if USE_FAKE_DATA else "real data"
@@ -87,7 +92,28 @@ def load_predictions() -> pd.DataFrame:
     keys = ["date", "item", "horizon"]
     models_per_forecast = combined.groupby(keys)["model"].transform("nunique")
     combined = combined[models_per_forecast == combined["model"].nunique()]
-    return _add_columns(combined)
+    combined["held_back"] = False
+    return _add_columns(pd.concat([combined, _flagged_copy(combined)], ignore_index=True))
+
+
+def _flagged_copy(combined: pd.DataFrame) -> pd.DataFrame:
+    """LightGBM rows again, as FLAGGED_MODEL, with held_back = True where the inputs were out of range."""
+    flags = (pd.read_csv(FLAG_FILE, parse_dates=["date"])
+               .query("model == 'lightgbm_flagged'")
+               .drop_duplicates(["date", "item", "horizon"])[["date", "item", "horizon", "inputs_out_of_range"]])
+    main = combined[combined["model"] == MAIN_MODEL]
+    flagged = main.drop(columns="held_back").merge(flags, on=["date", "item", "horizon"], how="left")
+    if flagged["inputs_out_of_range"].isna().any():
+        raise ValueError(f"{FLAG_FILE.name} has no flag for some LightGBM forecasts")
+    flagged["held_back"] = flagged.pop("inputs_out_of_range").astype(bool)
+    flagged["model"] = FLAGGED_MODEL
+    return flagged
+
+
+def said_rising(df: pd.DataFrame, threshold: float = RISING_THRESHOLD) -> pd.Series:
+    """The model's alert: predicted growth above the threshold, unless the alert was held back."""
+    held_back = df["held_back"] if "held_back" in df.columns else False
+    return (df["predicted_growth"] > threshold) & ~held_back
 
 
 def _add_columns(df: pd.DataFrame) -> pd.DataFrame:
