@@ -1,48 +1,34 @@
-# Deployment
+# Deployment: Before the Hype rankings app
 
-The deployment folder packages the trend rankings into a small web application,
-tests it automatically, builds a Docker image and deploys it to Azure Container
-Apps on every push to `main`.
+A small web app that serves weekly style rankings to buyers. It reads a saved
+rankings file made by the modelling code; it does not train models itself.
 
-A buyer opens the app in a browser to see which styles are rising, which
-category is leading, whether the whole market is moving, and when to place
-orders.
+**Current status:** live on Azure Container Apps at
+https://fashion-trends-api.salmonsky-bf89d2c7.eastasia.azurecontainerapps.io/
 
-## Architecture
+It serves the real weekly rankings from the LightGBM model
+(`data/rankings.csv`, 137 styles, January 2025 – October 2026) with a rising
+threshold of 1.2. Every merge into `main` that changes `deployment/` is tested,
+built and deployed automatically. The fake file `data/rankings_fake.csv` is kept
+for reference.
 
-```text
-                  GitHub Actions (CI/CD)
-                            │
-               pytest ───► docker build ───► ghcr.io
-                                                │
-                                                ▼
-     Browser / Buyer ───────────────► Azure Container Apps
-  http://.../ (buyer page)                (FastAPI app)
-  http://.../docs (API)                         │
-                                                ▼
-                                         rankings.csv
-                                         (from LightGBM)
-```
-
-## Files
+## What each file does
 
 | File | Purpose |
 | --- | --- |
-| `app/main.py` | The FastAPI app: API endpoints, ordering windows, request logging, and error handling |
-| `app/page.py` | The buyer page: KPI bar, item cards and table, item details, and order plan export |
+| `app/main.py` | The FastAPI app: API endpoints, request logging and error handling |
+| `app/page.py` | The buyer page: KPI bar, item cards and table, item details, order plan |
 | `app/pictures.py` | Original drawings for every item (no copyrighted photos) |
 | `app/data.py` | Loads the rankings file and checks its format |
-| `data/rankings.csv` | Real weekly rankings: 137 styles, 2025-01-05 to 2026-10-11, horizons 4 and 8 |
+| `data/rankings.csv` | Real rankings from the LightGBM model |
 | `data/search_history.csv` | Weekly search interest per style, for the chart in the item details (optional) |
 | `data/explanations.csv` | SHAP contributions for every forecast, for the item details (optional) |
 | `data/rankings_fake.csv` | Fake rankings: 55 example styles, 6 weeks, horizons 4 and 8 |
-| `scripts/refresh_rankings.py` | Automated refresh script to re-score, validate, and update rankings |
 | `scripts/make_fake_rankings.py` | Recreates the fake file |
-| `tests/test_api.py` | Automatic checks (30 tests covering API, ordering windows, and charts) |
+| `tests/test_api.py` | Automatic checks (30 tests) |
 | `Dockerfile` | Recipe for the container image |
 | `azure/containerapp.yaml` | Azure settings: resources, environment variables, health probes, scaling |
-| `../.github/workflows/deployment-ci.yml` | CI/CD pipeline on GitHub Actions (Azure Container Apps) |
-| `../.github/workflows/weekly-refresh.yml` | Scheduled weekly cron job to auto-refresh rankings |
+| `../.github/workflows/deployment-ci.yml` | CI/CD pipeline on GitHub Actions |
 
 ## Endpoints
 
@@ -52,117 +38,156 @@ orders.
 | `/docs` | Interactive API documentation (made by FastAPI) |
 | `/health` | `{"status": "ok", "version": ..., "rows": ..., "weeks": ...}`; used by the pipeline and Azure |
 | `/weeks` | Forecast weeks in the file, newest first |
-| `/rankings?horizon=4&top_k=10&week=2026-10-11&category=Shoes&lead_time_weeks=4` | Top styles with growth, growth vs market, alerts, supplier order deadlines and urgency |
-| `/styles/{style}` | All forecasts for one style (JSON for API, HTML report when visited with `?format=html`) |
-| `/style-view?style=ballet+flats&horizon=4&lead_time_weeks=4` | Visual style forecast page with SVG curve and shaded ordering window |
+| `/rankings?horizon=4&top_k=10&week=2026-10-11&category=Shoes` | Top styles with growth, growth vs market and alert; plus the week's market growth and whether alerts are held back. All parameters optional |
+| `/styles/{style}` | Every forecast for one style, e.g. `/styles/ballet flats` |
 
 `version` in `/health` is the commit ID the running image was built from
-(`dev` when run locally).
+(`dev` when run locally), so you can always tell which code is live.
 
-## Features for Fast Fashion Retail Buyers
+## Settings (environment variables)
 
-1. **Trend Rankings:** 137 styles ranked by expected growth ratio (forecast average ÷ last 4-week average).
-2. **Trajectory Sparklines:** Compact inline SVG sparklines showing each style's recent trajectory.
-3. **Supplier Ordering Windows:** Computes target peak week and latest order deadline based on the retailer's lead time (e.g., 2, 4, 6, 8 weeks).
-4. **Buyer Urgency Badges:**
-   - **Window Open (Green):** Sufficient lead-time cushion to plan production.
-   - **Order Soon (Amber):** Order deadline approaching within 1–2 weeks.
-   - **Order Now (Red Bold):** Critical deadline this week to catch predicted peak.
-   - **Window Closed:** Lead time exceeds horizon; requires express replenishment.
-   - **Monitor / Steady (Grey):** Style stable/declining; maintain base replenishment.
-5. **Interactive Forecast Curves:** Clicking any style shows a timeline chart displaying historical search interest, 4w/8w forecast trajectory, and the shaded supplier ordering window.
-6. **Order Plan CSV Export:** Export current buying recommendations and quantities directly to CSV.
+| Variable | Default | Meaning |
+| --- | --- | --- |
+| `RANKINGS_PATH` | `data/rankings.csv` | Rankings file to serve |
+| `RISING_THRESHOLD` | `1.2` | Predicted growth above which a style is flagged as rising; must match the threshold used to make the file's `alert` column |
+| `ORDER_LEAD_WEEKS` | `6` | Supplier lead time in weeks, used by the order window and the ordering bar |
+| `LOG_LEVEL` | `INFO` | `DEBUG` also logs every `/health` call |
+| `APP_VERSION` | `dev` | Set automatically by the pipeline when the image is built |
 
-## Running locally
+No passwords or keys are needed by the app itself.
 
-From the `deployment/` folder:
+## Run it on your computer
+
+From this `deployment/` folder:
 
 ```bash
-pip install -r requirements.txt
-uvicorn app.main:app --reload
+pip install -r requirements-dev.txt
+python -m pytest -v               # run the tests
+uvicorn app.main:app --reload     # start the app
 ```
 
-Then visit:
+Open http://localhost:8000 and http://localhost:8000/docs.
 
-- `http://localhost:8000` for the buyer page
-- `http://localhost:8000/docs` for the interactive API documentation
+## Run it in Docker
 
-Run the automated checks with:
-
-```bash
-pytest -v
-```
-
-## Running with Docker locally
+Needs Docker Desktop. From this folder:
 
 ```bash
 docker build -t fashion-trends-api .
 docker run -p 8000:8000 fashion-trends-api
 ```
 
-## Continuous deployment
+## The rankings file format
 
-The workflow `.github/workflows/deployment-ci.yml` runs on every pull request
-and push to `main`. It has four jobs:
+The file needs these columns (extra columns are fine):
 
-1. **test**: installs packages and runs the tests.
-2. **build** (only if tests pass): builds the Docker image, starts it, and
-   calls `/health` and `/rankings`. A failure here shows the container logs.
-3. **publish** (only on the default branch): pushes the image to GitHub
-   Container Registry as `ghcr.io/<owner>/<repo>/fashion-trends-api`, tagged
-   with `latest` and the commit id.
-4. **deploy** (only on default branch): updates Azure Container Apps using OpenID Connect
-   and verifies the live health endpoint serves the new SHA version.
+| Column | Meaning |
+| --- | --- |
+| `week` | Week the forecast was made, `YYYY-MM-DD` |
+| `style` | Keyword, e.g. `ballet flats` |
+| `category` | One of the 11 categories |
+| `horizon` | 4 or 8 |
+| `predicted_growth` | Forecast average ÷ last 4-week average (1.0 = no change) |
+| `rank` | 1 = highest expected growth, within each week and horizon |
 
-## Azure setup
+Optional columns, made by the modelling code (the app works them out if they are missing):
 
-The app runs on Azure Container Apps in the West Europe region, in a resource
-group named `rg-fashion-trends`.
+| Column | Meaning |
+| --- | --- |
+| `market_growth` | Average predicted growth of all styles in that week and horizon |
+| `growth_vs_market` | `predicted_growth` ÷ `market_growth`; above 1 = expected to beat the market |
+| `inputs_out_of_range` | The market's recent growth was outside the training range, so alerts are held back |
+| `alert` | The rising alert: growth above the threshold in a week that is not out of range |
 
-### Initial creation (run once)
+The app refuses to start if the file breaks the format (missing columns,
+horizon not 4 or 8, ranks not 1..n, duplicates), or if the file's `alert`
+column does not match the app's `RISING_THRESHOLD`. The alerts a buyer sees
+therefore always follow the same rule as in the modelling code, and problems
+show up in the pipeline, not in front of users.
 
-Install the Azure CLI, sign in, and run from a PowerShell or bash prompt:
+## The buyer page
+
+- **KPI bar**: overall market trend, number of items expected to grow above the rising threshold,
+  the category with the highest average growth, and the factory order window for the supplier lead time.
+- **Actions** for every item: *Stock up* (the model's rising alert), *Check first* (a rise forecast in a
+  week whose inputs were outside the training range), *Consider* (growth of 5% or more), *Keep steady*
+  (within 5%) and *Hold off* (a fall of more than 5%).
+- **Cards or table**: the table sorts by rank, style, category, predicted growth, alpha vs. market
+  (`growth_vs_market` − 1) or action.
+- **Item details**: a plain-language explanation; the last 8 weeks of searches with the forecast average
+  (and, for past forecasts, what actually happened); a SHAP breakdown of what pushed the forecast up or down;
+  and an ordering bar comparing the lead time with the forecast window.
+- **Order plan**: add items, set units and export a CSV. The plan is kept in the viewer's browser only.
+
+`search_history.csv` and `explanations.csv` are made by `analysis/export_app_data.py` from the same
+prepared series and a rebuilt LightGBM model (retrained every 4 weeks, averaged over 5 seeds); the
+explained forecasts match the live ones with a correlation of 0.9995. Rerun it whenever `rankings.csv`
+changes. Without these files the page still works, without the chart and the SHAP breakdown.
+
+## The pipeline
+
+On every push or pull request that touches `deployment/` or the workflow file:
+
+1. **test**: installs packages and runs the 30 tests.
+2. **build** (only if tests pass): builds the Docker image stamped with the
+   commit ID, starts it, and calls `/health` and `/rankings`. A failure here
+   shows the container logs. On `main` only, it then pushes the image to GitHub
+   Container Registry as
+   `ghcr.io/samichi-rungta/fashion-trends-forcasting/fashion-trends-api`,
+   tagged with `latest` and the commit ID.
+3. **deploy** (only on `main`, only if build passed): signs in to Azure,
+   switches the container app to the new image, and waits until the live
+   `/health` reports the new commit ID, then calls the live `/rankings`. If the
+   new version is not live within about 20 minutes, the run fails.
+
+Pull requests run steps 1 and 2 only, so changes are checked before they can
+reach the live app.
+
+## Cloud deployment (Azure)
+
+| Part | Name | Purpose |
+| --- | --- | --- |
+| Resource group | `rg-fashion-trends` | Holds everything; deleting it removes all resources |
+| Container Apps environment | `env-fashion-trends` (East Asia, standard `WorkloadProfiles` mode) | Where the container runs; provides HTTPS and the public address |
+| Container app | `fashion-trends-api` | Runs the image; 0.5 CPU, 1 GB memory, 1–2 copies |
+| Log Analytics workspace | `log-fashion-trends` | Collects the app's logs and Azure's events (kept 30 days) |
+| Managed identity | `id-github-deploy` | The account GitHub Actions deploys with; allowed to manage this resource group only |
+
+### Secure sign-in from GitHub (no stored password)
+
+GitHub Actions signs in with OpenID Connect: for each run, GitHub issues a
+short-lived token, and Azure accepts it only for runs from the `main` branch of
+this repository. The repository secrets `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`
+and `AZURE_SUBSCRIPTION_ID` only name the identity; none of them is a password.
+GitHub identifies the repository with permanent ID numbers
+(`repo:samichi-rungta@64314150/fashion-trends-forcasting@1429854542:ref:refs/heads/main`),
+so a different repository created later with the same name could not deploy.
+
+### One-time setup (already done; for reproducing the deployment)
+
+Needs the Azure CLI and a subscription. Azure for Students only allows a few
+regions; list them with
+`az policy assignment list --query "[].parameters.listOfAllowedLocations.value"`.
 
 ```powershell
-# Log in and choose the subscription
 az login
-az account set --subscription "<subscription-id>"
-
-# Register the resource providers (takes a minute the first time)
+az extension add --name containerapp --upgrade
 az provider register --namespace Microsoft.App
 az provider register --namespace Microsoft.OperationalInsights
 
-# Resource group and log workspace
-az group create --name rg-fashion-trends --location westeurope
-az monitor log-analytics workspace create --resource-group rg-fashion-trends --workspace-name log-fashion-trends
+az group create --name rg-fashion-trends --location southeastasia
+az monitor log-analytics workspace create --resource-group rg-fashion-trends --workspace-name log-fashion-trends --location eastasia
+$WS_ID = az monitor log-analytics workspace show --resource-group rg-fashion-trends --workspace-name log-fashion-trends --query customerId -o tsv
+$WS_KEY = az monitor log-analytics workspace get-shared-keys --resource-group rg-fashion-trends --workspace-name log-fashion-trends --query primarySharedKey -o tsv
 
-# Container Apps environment (standard "WorkloadProfiles" mode)
-az containerapp env create `
-  --name env-fashion-trends `
-  --resource-group rg-fashion-trends `
-  --location westeurope `
-  --logs-workspace-id (az monitor log-analytics workspace show --resource-group rg-fashion-trends --workspace-name log-fashion-trends --query customerId -o tsv) `
-  --logs-workspace-key (az monitor log-analytics workspace get-shared-keys --resource-group rg-fashion-trends --workspace-name log-fashion-trends --query primarySharedKey -o tsv)
+# Choose the standard mode explicitly; East Asia otherwise may create a preview "Express" environment.
+az containerapp env create --name env-fashion-trends --resource-group rg-fashion-trends --location eastasia --environment-mode WorkloadProfiles --logs-destination log-analytics --logs-workspace-id $WS_ID --logs-workspace-key $WS_KEY
 
-# Create the Container App
-az containerapp create `
-  --name fashion-trends-api `
-  --resource-group rg-fashion-trends `
-  --environment env-fashion-trends `
-  --image mcr.microsoft.com/azuredocs/aci-helloworld:latest `
-  --target-port 8000 `
-  --ingress external `
-  --cpu 0.5 --memory 1.0Gi `
-  --min-replicas 1 --max-replicas 1
-```
+az containerapp create --name fashion-trends-api --resource-group rg-fashion-trends --environment env-fashion-trends --image ghcr.io/samichi-rungta/fashion-trends-forcasting/fashion-trends-api:latest --target-port 8000 --ingress external --cpu 0.5 --memory 1.0Gi --min-replicas 1 --max-replicas 2 --env-vars RISING_THRESHOLD=1.2
+az containerapp update --name fashion-trends-api --resource-group rg-fashion-trends --yaml deployment/azure/containerapp.yaml
 
-### GitHub Actions sign-in (OIDC)
-
-The pipeline authenticates to Azure without stored passwords, using OpenID
-Connect:
-
-```powershell
-az identity create --name id-github-deploy --resource-group rg-fashion-trends
+# Identity for GitHub Actions
+az identity create --name id-github-deploy --resource-group rg-fashion-trends --location eastasia
 $ID_PRINCIPAL = az identity show --name id-github-deploy --resource-group rg-fashion-trends --query principalId -o tsv
 $RG_ID = az group show --name rg-fashion-trends --query id -o tsv
 az role assignment create --assignee-object-id $ID_PRINCIPAL --assignee-principal-type ServicePrincipal --role Contributor --scope $RG_ID
@@ -203,7 +228,27 @@ az containerapp revision list --name fashion-trends-api --resource-group rg-fash
 ```
 
 Older logs are in the Log Analytics workspace (Azure portal → `log-fashion-trends`
-→ Logs).
+→ Logs), for example:
+
+```text
+ContainerAppConsoleLogs_CL
+| where ContainerAppName_s == "fashion-trends-api"
+| project TimeGenerated, Log_s
+| order by TimeGenerated desc
+```
+
+### Cost
+
+The app uses the Consumption plan, charged per second of CPU and memory. One
+copy always runs because pulling the image from GitHub Container Registry
+takes several minutes, longer than Azure's 5-minute idle shutdown; with
+scale-to-zero, the app could not finish starting. An idle copy is charged at a
+lower rate. Logs are charged by volume and kept for 30 days. To stop all
+charges after evaluation:
+
+```powershell
+az group delete --name rg-fashion-trends --yes
+```
 
 ### Troubleshooting notes
 
@@ -217,10 +262,8 @@ Older logs are in the Log Analytics workspace (Azure portal → `log-fashion-tre
 - **"stream timeout" in the browser:** the app has not started yet, usually
   because the image is still downloading; check the system events.
 
-## Completed Production Capabilities
+## Not done yet (remaining work)
 
-- Real rankings served from LightGBM model for 137 styles across 2025–2026.
-- Continuous deployment pipeline active to Azure Container Apps.
-- Supplier lead-time ordering window calculation and urgency badges.
-- Trend trajectory sparklines in buyer table and responsive SVG forecast timeline charts per style.
-- Scheduled weekly refresh workflow configured in GitHub Actions (`.github/workflows/weekly-refresh.yml`).
+- Automatic weekly update: fetch new searches, rerun the model, rebuild `rankings.csv`, then rerun
+  `analysis/export_app_data.py` so the item details stay in step.
+
