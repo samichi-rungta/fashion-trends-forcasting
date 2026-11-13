@@ -78,3 +78,6 @@ Thumbs.db
 /results/f1/predictions_four_week_average_validation.csv
 /results/f1/predictions_last_value_validation.csv
 /results/f1/predictions_seasonal_naive_validation.csv
+
+# Weekly update: per-style download cache (the combined pull is kept)
+update/data/cache/

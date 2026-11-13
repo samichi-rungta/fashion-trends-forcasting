@@ -1,0 +1,7 @@
+# Packages for the weekly update (python update/weekly_update.py ...).
+pandas==2.2.3
+numpy
+lightgbm==4.5.0
+scikit-learn      # LightGBM's model class needs it
+pytrends==4.9.2   # Google Trends download
+pytest            # update/tests
