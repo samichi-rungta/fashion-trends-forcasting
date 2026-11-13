@@ -1,4 +1,4 @@
-"""The buyer page: KPI bar, item cards or a merchandising table, item details and an order plan.
+"""The buyer page: category cards, item cards or a merchandising table, item details and an order plan.
 
 Drawn on the server as HTML. The item details (search chart, SHAP breakdown, ordering bar)
 and the order plan are drawn in the browser from a small JSON block, so the page needs no
@@ -21,7 +21,7 @@ ACTIONS = {
     "stock": "Stock up", "check": "Check first", "consider": "Consider", "steady": "Keep steady", "hold": "Hold off",
 }
 ADVICE = {
-    "stock": "Order now, so the stock arrives while interest is climbing.",
+    "stock": "Worth ordering more. Check below whether your order can arrive in time.",
     "check": "Look at your own sales before ordering more. The model expects a rise, but this week the whole "
              "market moved outside anything it saw in training, so its forecasts are less reliable.",
     "consider": "A small top-up is reasonable, especially if it already sells well for you.",
@@ -29,9 +29,10 @@ ADVICE = {
     "hold": "Avoid large new orders for now; extra stock may be slow to sell.",
 }
 GROUP_LABELS = {
-    "recent_level": "Recent search level", "momentum": "Momentum", "season": "Last year's season",
-    "market": "Market trend", "category": "Category",
+    "recent_level": "Recent searches", "momentum": "Rising or falling lately", "season": "Last year's season",
+    "market": "All fashion searches", "category": "Category",
 }
+EPS, MIN_LEVEL = 1.0, 5.0  # same smoothing constant and minimum level as the model
 
 
 def action(row) -> str:
@@ -89,41 +90,76 @@ def explanation(s, market: float, total: int, horizon: int, earlier: float | Non
             f"<h4>What to do: {ACTIONS[key]}</h4><p>{ADVICE[key]}</p>")
 
 
-def kpis(all_rows: pd.DataFrame, data: dict, lead: int, latest_week: str) -> str:
-    horizon, week, threshold = data["horizon"], data["week"], data["rising_threshold"]
-    market = data["market_growth"]
-    above = int((all_rows["predicted_growth"] > threshold).sum())
-    board = all_rows.groupby("category")["predicted_growth"].mean()
-    lead_cat, lead_g = board.idxmax(), board.max()
+def past_market_range(history: pd.DataFrame | None, week: str, horizon: int) -> tuple[float, float] | None:
+    """How much fashion searches overall really changed at this time of year in earlier years (lowest, highest).
+
+    For each earlier year, the same growth the model predicts: the average of the 4 weeks ending `horizon` weeks
+    after the forecast week, divided by the last 4 weeks, averaged over styles. Only years before the forecast
+    week are used, so the check never looks at the future.
+    """
+    if history is None:
+        return None
+    start = pd.Timestamp(week)
+    last4 = history.rolling(4).mean()
+    ahead = last4.shift(-horizon)
+    changes = []
+    for years in range(1, 12):
+        day = start - pd.DateOffset(years=years)
+        if day < history.index[0] + pd.to_timedelta(28, unit="D"):
+            break
+        t = history.index[history.index.get_indexer([day], method="nearest")[0]]
+        before, after = last4.loc[t], ahead.loc[t]
+        ok = (before >= MIN_LEVEL) & after.notna()
+        if ok.sum() >= 20:
+            changes.append(float(((after[ok] + EPS) / (before[ok] + EPS)).mean()))
+    return (min(changes), max(changes)) if len(changes) >= 3 else None
+
+
+def top_section(items: pd.DataFrame, data: dict, lead: int, latest_week: str, history: pd.DataFrame | None) -> str:
+    """Category cards (most items to stock up) and plain notes on delivery, old data and unusual forecasts."""
+    horizon, week, market = data["horizon"], data["week"], data["market_growth"]
+    stock = items[items["action"] == "stock"]
+    if stock.empty:
+        cards = '<p class="cat-empty">No items are expected to rise more than 20% in this period.</p>'
+    else:
+        ranked = (stock.groupby("category")["predicted_growth"].agg(["size", "max"])
+                       .sort_values(["size", "max"], ascending=False).head(3))
+        cards = ""
+        for cat, row in ranked.iterrows():
+            top = stock[stock["category"] == cat].nlargest(2, "predicted_growth")
+            lines = "".join(f'<li><span>{escape(cap(t["style"]))}</span><b>{pct(t["predicted_growth"])}</b></li>'
+                            for _, t in top.iterrows())
+            n = int(row["size"])
+            cards += (f'<div class="cat-card"><h3>{escape(cat)}</h3>'
+                      f'<p class="cat-count">{n} {"style" if n == 1 else "styles"} predicted to rise '
+                      f'<span class="status stock">Stock up</span></p><ul>{lines}</ul></div>')
+        cards = f'<div class="cat-cards">{cards}</div>'
 
     start = pd.Timestamp(week)
-    arrives = start + pd.DateOffset(weeks=lead)
-    ends = start + pd.DateOffset(weeks=horizon)
-    if lead < horizon:
-        window, window_class = (f"Orders placed on {date_label(start)} arrive {date_label(arrives)}, "
-                                f"in time for the last {horizon - lead} of the {horizon} forecast weeks."), "ok"
+    arrives, ends = start + pd.DateOffset(weeks=lead), start + pd.DateOffset(weeks=horizon)
+    if lead > horizon:
+        delivery = (f"Your delivery takes {lead} weeks. This forecast covers the next {horizon} weeks, so your order "
+                    f"would arrive after this period. Check the 8-week forecast.")
     elif lead == horizon:
-        window, window_class = f"Orders placed on {date_label(start)} arrive {date_label(arrives)}, just as the window ends.", "warn"
+        delivery = (f"Your delivery takes {lead} weeks. If you order on {date_label(start)}, the stock arrives on "
+                    f"{date_label(arrives)}, just as this forecast period ends.")
     else:
-        window, window_class = (f"A {lead}-week lead time misses this {horizon}-week window (ends {date_label(ends)}). "
-                                f"Plan orders with the 8-week view."), "late"
-    age = (pd.Timestamp(date.today()) - pd.Timestamp(latest_week)).days // 7
-    stale = (f'<span class="kpi-warn">Latest data is {age} weeks old: refresh it before ordering.</span>'
-             if age >= 2 and week == latest_week else "")
+        delivery = (f"Your delivery takes {lead} weeks. If you order on {date_label(start)}, the stock arrives on "
+                    f"{date_label(arrives)}, {horizon - lead} {'week' if horizon - lead == 1 else 'weeks'} before this "
+                    f"forecast period ends ({date_label(ends)}).")
+    notes = f'<p class="plain-note">{delivery}</p>'
 
-    breakout_note = ("Alerts held back: unusual market week" if data["alerts_held_back"]
-                     else f"Expected growth above {pct(threshold)}")
-    return f"""<section class="kpis" aria-label="Key figures">
-  <div class="kpi"><span class="kpi-label">Overall market trend</span>
-    <b class="kpi-value {'down' if market < 1 else 'up'}">{pct(market, 1)}</b>
-    <span class="kpi-note">All {len(all_rows)} items, next {horizon} weeks</span></div>
-  <div class="kpi"><span class="kpi-label">High-conviction breakouts</span>
-    <b class="kpi-value">{above}</b><span class="kpi-note">{breakout_note}</span></div>
-  <div class="kpi"><span class="kpi-label">Leading category</span>
-    <b class="kpi-value small">{escape(lead_cat)}</b><span class="kpi-note">Average {pct(lead_g, 1)} expected growth</span></div>
-  <div class="kpi window {window_class}"><span class="kpi-label">Factory order window ({lead}-week lead time)</span>
-    <span class="kpi-text">{window}</span>{stale}</div>
-</section>"""
+    age = (pd.Timestamp(date.today()) - pd.Timestamp(latest_week)).days // 7
+    if age >= 2 and week == latest_week:
+        notes += '<p class="plain-note warn">This forecast uses old data. Update it before planning an order.</p>'
+
+    usual = past_market_range(history, week, horizon)
+    if usual is not None and not usual[0] <= market <= usual[1]:
+        notes += (f'<p class="plain-note warn"><b>Unusual forecast.</b> In past years, fashion searches at this time of '
+                  f"year changed by {pct(usual[0])} to {pct(usual[1])} over {horizon} weeks. This forecast expects "
+                  f"{pct(market)}, so treat the numbers with care and focus on the items at the top of the list.</p>")
+    return (f'<section class="top" aria-label="Where the growth is">{cards}'
+            f'<p class="cat-label">Predicted growth in Google search interest.</p>{notes}</section>')
 
 
 def item_data(s, key: str, i: int, explain_html: str, history, explanations, horizon: int, week: str):
@@ -193,7 +229,7 @@ def render(data: dict, all_rows: pd.DataFrame, shown: pd.DataFrame, history: pd.
             f'<button type="button" class="open" data-i="{i}" aria-haspopup="dialog">'
             f'<span class="pic">{picture(s["style"], s["category"])}</span><span class="rank">#{s["rank"]}</span>'
             f'<span class="name">{name}</span><span class="cat">{cat}</span></button>'
-            f'<div class="row"><span class="interest">{growth}<small> interest</small></span>'
+            f'<div class="row"><span class="interest">{growth}<small> {"more" if s["predicted_growth"] >= 1 else "fewer"} searches</small></span>'
             f'<span class="status {key}">{ACTIONS[key]}</span></div>'
             f'<button type="button" class="add" data-i="{i}">+ Add to order plan</button></li>'
         )
@@ -214,8 +250,8 @@ def render(data: dict, all_rows: pd.DataFrame, shown: pd.DataFrame, history: pd.
                f"Fashion searches overall should {market_text}.")
     held_note = ""
     if data["alerts_held_back"]:
-        held_note = ('<p class="note"><b>Unusual market week.</b> Searches across all of fashion moved outside anything '
-                     "the model saw in training, so items it expects to rise are marked <b>Check first</b> instead of Stock up.</p>")
+        held_note = ('<p class="note"><b>Unusual week.</b> Fashion searches as a whole behaved very unusually this week, '
+                     "so items expected to rise are marked <b>Check first</b> instead of Stock up.</p>")
     page_data = {"week": week, "horizon": horizon, "lead": lead_weeks, "threshold": data["rising_threshold"], "items": payload}
     page_json = json.dumps(page_data, separators=(",", ":")).replace("</", "<\\/")
 
@@ -252,17 +288,18 @@ def render(data: dict, all_rows: pd.DataFrame, shown: pd.DataFrame, history: pd.
   .intro h1 {{ font-weight: 600; font-size: 2.6rem; line-height: 1.15; margin: 0 0 .4rem; letter-spacing: -.02em; }}
   .intro p {{ margin: 0; color: var(--muted); font-size: 1.02rem; }}
 
-  .kpis {{ display: grid; grid-template-columns: 1fr 1fr 1fr 1.6fr; gap: 1rem; margin: .5rem 0 1.5rem; }}
-  .kpi {{ border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; display: grid; align-content: start; gap: .15rem; }}
-  .kpi-label {{ font-size: .8rem; color: var(--muted); }}
-  .kpi-value {{ font-size: 1.9rem; font-weight: 600; line-height: 1.2; letter-spacing: -.01em; }}
-  .kpi-value.small {{ font-size: 1.25rem; padding: .3rem 0 .15rem; }}
-  .kpi-value.down {{ color: var(--hold); }} .kpi-value.up {{ color: var(--stock); }}
-  .kpi-note {{ font-size: .8rem; color: var(--muted); }}
-  .kpi-text {{ font-size: .9rem; line-height: 1.45; margin-top: .2rem; }}
-  .kpi.window {{ border-left-width: 4px; }}
-  .kpi.window.ok {{ border-left-color: var(--stock); }} .kpi.window.warn {{ border-left-color: #d99a17; }} .kpi.window.late {{ border-left-color: var(--hold); }}
-  .kpi-warn {{ font-size: .78rem; color: var(--check); background: var(--check-bg); border-radius: 6px; padding: .2rem .5rem; margin-top: .4rem; justify-self: start; }}
+  .top {{ margin: .5rem 0 1.5rem; }}
+  .cat-cards {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }}
+  .cat-card {{ border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; }}
+  .cat-card h3 {{ margin: 0; font-size: 1.15rem; font-weight: 600; }}
+  .cat-count {{ margin: .1rem 0 .6rem; font-size: .85rem; color: var(--muted); display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; }}
+  .cat-card ul {{ list-style: none; margin: 0; padding: 0; }}
+  .cat-card li {{ display: flex; justify-content: space-between; gap: 1rem; padding: .3rem 0; border-top: 1px solid var(--line); font-size: .92rem; }}
+  .cat-card li b {{ font-weight: 600; color: var(--stock); }}
+  .cat-empty {{ border: 1px solid var(--line); border-radius: 14px; padding: 1rem 1.1rem; margin: 0; }}
+  .cat-label {{ font-size: .8rem; color: var(--muted); margin: .5rem 0 .8rem; }}
+  .plain-note {{ border-left: 4px solid var(--line); padding: .4rem .9rem; margin: 0 0 .6rem; font-size: .92rem; }}
+  .plain-note.warn {{ border-left-color: #d99a17; background: var(--check-bg); border-radius: 0 8px 8px 0; }}
 
   .controls {{ display: flex; gap: 1rem; align-items: center; padding: .9rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }}
   .seg {{ display: inline-flex; border: 1px solid var(--ink); border-radius: 999px; overflow: hidden; }}
@@ -388,12 +425,12 @@ def render(data: dict, all_rows: pd.DataFrame, shown: pd.DataFrame, history: pd.
     <p>{summary}</p>
   </section>
 
-  {kpis(all_rows, data, lead_weeks, weeks[0])}
+  {top_section(items, data, lead_weeks, weeks[0], search_history)}
 
   <form class="controls" method="get">
     <div class="seg" role="group" aria-label="Forecast period">{link(4)}{link(8)}</div>
     <input type="hidden" name="horizon" value="{horizon}">
-    <label>Forecast date <select name="week" onchange="this.form.submit()">{week_options}</select></label>
+    <label>Forecast made on <select name="week" onchange="this.form.submit()">{week_options}</select></label>
     <label>Category <select name="category" onchange="this.form.submit()">{category_options}</select></label>
     <noscript><button type="submit">Show</button></noscript>
     <input class="push" type="search" id="find" placeholder="Search items" aria-label="Search items" autocomplete="off">
@@ -413,16 +450,16 @@ def render(data: dict, all_rows: pd.DataFrame, shown: pd.DataFrame, history: pd.
     <div class="table-wrap"><table id="table">
       <thead><tr>
         <th class="num" data-key="rank" aria-sort="ascending"><button type="button">Rank</button></th>
-        <th data-key="style"><button type="button">Style</button></th>
+        <th data-key="style"><button type="button">Item</button></th>
         <th data-key="cat"><button type="button">Category</button></th>
-        <th class="num" data-key="growth"><button type="button" title="Expected change in search interest over the period, compared with the last 4 weeks">Predicted growth</button></th>
-        <th class="num" data-key="alpha"><button type="button" title="How much faster (+) or slower (−) than the average item">Alpha vs. market</button></th>
-        <th data-key="order"><button type="button">Action</button></th><th></th>
+        <th class="num" data-key="growth"><button type="button" title="Expected change in searches over the period, compared with the last 4 weeks">Expected change in searches</button></th>
+        <th class="num" data-key="alpha"><button type="button" title="How much more (+) or less (−) than the average item">Compared with the average item</button></th>
+        <th data-key="order"><button type="button">What to do</button></th><th></th>
       </tr></thead>
       <tbody id="rows">{rows}</tbody>
     </table></div>
-    <p class="table-help"><b>Predicted growth</b>: expected change in searches over the next {horizon} weeks, compared with the last 4 weeks.
-      <b>Alpha vs. market</b>: how much faster (+) or slower (−) the item should grow than the average item. Click a column to sort.</p>
+    <p class="table-help"><b>Expected change in searches</b>: how much searches should change over the next {horizon} weeks, compared with the last 4 weeks.
+      <b>Compared with the average item</b>: how much more (+) or less (−) this item should grow than the average item. Click a column to sort.</p>
   </div>
   <p class="empty" id="empty">No items match. Try another word or action.</p>
 
@@ -517,7 +554,7 @@ function chart(it) {{
   s += `<polyline fill="none" stroke="#191716" stroke-width="2" stroke-dasharray="5 4" points="${{x(n - 1)}},${{y(past[n - 1][1])}} ${{x(n)}},${{y(it.fc)}} ${{x(total - 1)}},${{y(it.fc)}}"/>`;
   past.forEach((p, i) => s += `<circle class="pt" cx="${{x(i)}}" cy="${{y(p[1])}}" r="3.2" fill="#191716" data-tip="Week of ${{dayLabel(p[0])}}: ${{p[1].toFixed(1)}}"/>`);
   after.forEach((p, i) => s += `<circle class="pt" cx="${{x(n + i)}}" cy="${{y(p[1])}}" r="2.6" fill="#b8b2ac" data-tip="Actual, week of ${{dayLabel(p[0])}}: ${{p[1].toFixed(1)}}"/>`);
-  s += `<circle class="pt" cx="${{x(total - 1)}}" cy="${{y(it.fc)}}" r="4" fill="#fff" stroke="#191716" stroke-width="2" data-tip="Forecast average, next ${{h}} weeks: ${{it.fc.toFixed(1)}}"/>`;
+  s += `<circle class="pt" cx="${{x(total - 1)}}" cy="${{y(it.fc)}}" r="4" fill="#fff" stroke="#191716" stroke-width="2" data-tip="Expected average, next ${{h}} weeks: ${{it.fc.toFixed(1)}}"/>`;
   return s + "</svg>";
 }}
 function shap(it) {{
@@ -526,7 +563,7 @@ function shap(it) {{
   const rows = Object.keys(labels).map(k => [labels[k], it.shap[k]]);
   const scale = Math.max(...rows.map(r => Math.abs(r[1])), .05);
   const bar = v => `<span class="track"><span class="bar ${{v >= 0 ? "up" : "down"}}" style="width:${{Math.min(Math.abs(v) / scale, 1) * 50}}%"></span></span>`;
-  return `<div class="shap-row"><span>Typical item</span>${{bar(0)}}<span class="v">${{fmt(it.shap.base)}}</span></div>` +
+  return `<div class="shap-row"><span>Average item</span>${{bar(0)}}<span class="v">${{fmt(it.shap.base)}}</span></div>` +
     rows.map(([l, v]) => `<div class="shap-row"><span>${{l}}</span>${{bar(v)}}<span class="v">${{fmt(v)}}</span></div>`).join("") +
     `<div class="shap-row total"><span>Forecast</span><span></span><span class="v">${{fmt(it.g - 1)}}</span></div>`;
 }}
@@ -536,34 +573,34 @@ function leadBar(it) {{
   const start = new Date(DATA.week + "T00:00:00"), at = w => {{ const d = new Date(start); d.setDate(d.getDate() + 7 * w); return d.toLocaleDateString("en-GB", {{ day: "numeric", month: "short" }}); }};
   let s = `<svg viewBox="0 0 ${{W}} ${{H}}" aria-hidden="true"><line x1="${{x(0)}}" x2="${{x(span)}}" y1="24" y2="24" stroke="#d8d2cc" stroke-width="2"/>`;
   s += `<rect x="${{x(0)}}" y="17" width="${{x(h) - x(0)}}" height="14" rx="4" fill="${{lead <= h ? "#e3f0e8" : "#f6e4e1"}}"/>`;
-  s += `<text x="${{(x(0) + x(h)) / 2}}" y="27.5" font-size="8.5" text-anchor="middle" fill="#3d3935">forecast window (${{h}} weeks)</text>`;
+  s += `<text x="${{(x(0) + x(h)) / 2}}" y="27.5" font-size="8.5" text-anchor="middle" fill="#3d3935">forecast period (${{h}} weeks)</text>`;
   s += `<circle cx="${{x(0)}}" cy="24" r="4" fill="#191716"/><text x="${{x(0)}}" y="46" font-size="8.5" fill="#75706b">Order ${{at(0)}}</text>`;
   s += `<line x1="${{x(lead)}}" x2="${{x(lead)}}" y1="10" y2="38" stroke="${{lead < h ? "#1f6b47" : lead === h ? "#d99a17" : "#9a3b33"}}" stroke-width="2.5"/>`;
   s += `<text x="${{x(lead)}}" y="8" font-size="8.5" text-anchor="middle" fill="#191716">Arrives ${{at(lead)}}</text></svg>`;
   let msg, cls;
   if (it.action === "hold" || it.action === "steady") {{ msg = "No new order suggested for this item."; cls = "warn"; }}
-  else if (it.action === "check") {{ msg = lead <= h ? `The lead time fits this window (stock arrives in week ${{lead}}), but check your own sales first: this is an unusual market week.` : `A ${{lead}}-week lead time arrives after this ${{h}}-week window, and this is an unusual market week.`; cls = "warn"; }}
-  else if (lead < h) {{ msg = `Safe to order now: stock arrives in week ${{lead}}, leaving ${{h - lead}} of the ${{h}} forecast weeks to sell.`; cls = "ok"; }}
-  else if (lead === h) {{ msg = "Tight: stock would arrive just as the forecast window ends."; cls = "warn"; }}
-  else {{ msg = `Window passed for this period: a ${{lead}}-week lead time arrives after the ${{h}}-week window. Check the 8-week view.`; cls = "late"; }}
+  else if (it.action === "check") {{ msg = lead <= h ? `Your stock would arrive on ${{at(lead)}}, in time, but check your own sales first: this is an unusual week.` : `Your delivery takes ${{lead}} weeks, so an order would arrive after this period, and this is an unusual week.`; cls = "warn"; }}
+  else if (lead < h) {{ msg = `If you order on ${{at(0)}}, the stock arrives on ${{at(lead)}}, ${{h - lead}} ${{h - lead === 1 ? "week" : "weeks"}} before this forecast period ends (${{at(h)}}).`; cls = "ok"; }}
+  else if (lead === h) {{ msg = `If you order on ${{at(0)}}, the stock arrives on ${{at(lead)}}, just as this forecast period ends.`; cls = "warn"; }}
+  else {{ msg = `Your delivery takes ${{lead}} weeks, so an order would arrive after this ${{h}}-week period. Check the 8-week forecast.`; cls = "late"; }}
   return s + `<p class="lead-msg ${{cls}}">${{msg}}</p>`;
 }}
 const dialog = document.getElementById("detail"), content = document.getElementById("d-content");
 function openItem(i) {{
   const it = ITEMS[i], card = grid.querySelector(`.card[data-i="${{i}}"]`);
-  const flag = it.oor ? `<p class="flag"><b>Unusual market swing.</b> The market's recent growth is outside anything the model saw in training, so this forecast is less reliable and its alert is held back.</p>` : "";
+  const flag = it.oor ? `<p class="flag"><b>Unusual week.</b> Fashion searches as a whole behaved very unusually, so this forecast is less reliable and its Stock up alert is held back.</p>` : "";
   content.innerHTML = `
     <div class="d-head"><span class="pic">${{card.querySelector(".pic").innerHTML}}</span>
       <div><span class="cat">${{esc(it.cat)}}</span><h3>${{esc(cap(it.style))}}</h3><span class="status ${{it.action}}">${{it.label}}</span>
-        <p class="d-num">${{fmt(it.g - 1)}}<small> predicted growth, next ${{DATA.horizon}} weeks (rank ${{it.rank}})</small></p></div></div>
+        <p class="d-num">${{fmt(it.g - 1)}}<small> expected change in searches, next ${{DATA.horizon}} weeks (rank ${{it.rank}})</small></p></div></div>
     ${{flag}}
     <div class="d-grid">
       <div class="d-text">${{it.text}}</div>
       <div class="panel chart"><h4>Weekly searches and forecast</h4>${{chart(it) || "<p class='hint'>Search history is not available.</p>"}}
-        <div class="legend"><span><i></i>Searches</span><span><i class="fc"></i>Forecast average</span>${{(it.after || []).length ? '<span><i class="after"></i>What happened</span>' : ""}}</div></div>
-      <div class="panel"><h4>What drove the forecast</h4>${{shap(it) || "<p class='hint'>Explanation not available.</p>"}}
-        <p class="hint">SHAP values: how much each group of model inputs pushed the forecast up or down from a typical item.</p></div>
-      <div class="panel"><h4>Ordering window (${{DATA.lead}}-week lead time)</h4>${{leadBar(it)}}</div>
+        <div class="legend"><span><i></i>Searches</span><span><i class="fc"></i>Expected average</span>${{(it.after || []).length ? '<span><i class="after"></i>What happened</span>' : ""}}</div></div>
+      <div class="panel"><h4>Why we expect this</h4>${{shap(it) || "<p class='hint'>Explanation not available.</p>"}}
+        <p class="hint">How much each reason pushed the forecast up or down.</p></div>
+      <div class="panel"><h4>When would your order arrive?</h4>${{leadBar(it)}}</div>
     </div>
     <div class="d-foot"><span>Based on Google searches up to the forecast date. A forecast, not a guarantee.</span>
       <button type="button" class="add" data-i="${{i}}">+ Add to order plan</button></div>`;
