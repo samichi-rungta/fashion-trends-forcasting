@@ -1,7 +1,7 @@
 """Create a FAKE rankings file so the app can be built before real results exist.
 
 The numbers are random. They only have the same shape as the real file that
-Person 2 will produce (one row per week, style and horizon).
+the modelling code produces (one row per week, style and horizon).
 
 Run from the deployment/ folder:
     python scripts/make_fake_rankings.py
