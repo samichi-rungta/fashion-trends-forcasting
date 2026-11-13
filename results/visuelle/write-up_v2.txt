@@ -1,0 +1,96 @@
+1. What Was Done
+
+The forecasting experiments investigate whether Google Trends search interest
+improves weekly sales forecasts beyond retail history, calendar variables, and
+planned discounts. Weekly sales series were constructed for categories,
+colours, and fabrics, with a stock-availability filter based on dated restock
+records. The experiments forecast sales rates four and eight weeks ahead.
+
+Forecast targets were split by calendar date, not by season label: training
+weeks were before 26 November 2018, validation covered 26 November 2018 through
+5 August 2019, and testing began on 12 August 2019. Models were fitted on
+training rows only; historical observations before a forecast origin could
+still be used across split boundaries for lagged features. Within each
+horizon, model variants used the same usable rows and target weeks.
+
+The comparison includes last-value and trailing-four-week-average baselines,
+Ridge regression, XGBoost, and LightGBM. Both boosted-tree models were evaluated
+with and without lagged search-interest features. Paired bootstrap confidence
+intervals over test weeks were used to evaluate the effect of adding search.
+
+2. What Was Found
+
+Both boosted-tree models substantially outperformed the last-value baseline.
+On the test set, XGBoost reduced MAE by approximately 36% at four weeks and
+47% at eight weeks, while LightGBM reduced MAE by approximately 35% and 47%,
+respectively. Without search, XGBoost achieved the lowest test WAPE at four
+weeks (18.97%), while LightGBM achieved the lowest at eight weeks (21.39%).
+
+Search impact is reported as WAPE with search minus WAPE without search, in
+percentage points. A positive change means search worsened the forecast. For
+LightGBM, search changed test WAPE by +0.22 percentage points at four weeks
+(95% CI: -0.33 to +0.74) and -0.54 percentage points at eight weeks (95% CI:
+-1.41 to +0.14). Both intervals include zero, so neither establishes a
+reliable change.
+
+For XGBoost, search changed WAPE by +1.05 percentage points at four weeks
+(95% CI: +0.39 to +1.88) and +1.14 percentage points at eight weeks (95% CI:
+-0.13 to +2.70). The four-week interval indicates a reliable deterioration in
+this comparison; the eight-week interval does not establish a reliable change.
+These results do not prove that search cannot help in other settings.
+
+The no-search boosted-tree models are therefore the primary benchmarks:
+XGBoost at four weeks and LightGBM at eight weeks, based on test WAPE.
+Incomplete search coverage and alignment remain limitations. The stock filter
+is also an imperfect proxy: some listing-weeks marked out of stock still have
+recorded sales. Results describe recorded sales under this filter, not
+unconstrained demand. Planned discounts are included as features, but their
+individual contribution was not isolated and descriptive discount
+associations should not be interpreted as causal.
+
+3. What Changed from the Proposal, and Why?
+
+The analysis was extended to include calendar-time weekly forecasting,
+stock-availability filtering, four- and eight-week horizons, and comparisons
+of boosted-tree models with and without lagged Google Trends features. Paired
+weekly bootstrap intervals were introduced to assess search contribution.
+These changes support a direct comparison of search features while reducing
+the risk of interpreting stockout-related zero sales as weak demand.
+
+The older search-contribution tables, explanation, figures, and figure
+generator were removed because they reflected an earlier season-label split
+and were not updated by the latest rerun. The current comparison uses the
+calendar-date split and the results in scores.csv and predictions.csv.
+
+The retained rolling_forecast_* files evaluate a separate binary-event
+forecast: whether a product-retailer listing's cumulative sales over the next
+four or eight weeks exceed zero. Their classification metrics are not
+sales-volume or sales-rate forecast errors and do not support the comparisons
+above. The original script was found in the separately supplied VISUELLE data
+folder; it retrains every four weeks using labels ending before the origin.
+All saved prediction labels matched the subsequent-sales definition when
+checked against the supplied sales data. Origin-week feature availability
+still needs verification, and the current script specifies XGBoost although
+the saved predictions contain only LightGBM and logistic regression, so the
+full saved run has not been reproduced.
+
+The binary test outcomes were heavily imbalanced: 40,732 of 43,499 were
+positive at four weeks (93.64%), and 20,467 of 20,475 were positive at eight
+weeks (99.96%), leaving only eight negatives. An always-positive classifier
+would achieve the same accuracy as the positive rate and 50% balanced
+accuracy. Accuracy and precision alone are misleading in this setting, and
+eight-week negative-class performance is especially fragile.
+
+The files are retained as supplementary historical results, but excluded from
+the project's trend-forecasting performance claims. Selling any units does not
+mean a style is rising: this target does not measure growth direction, rank
+emerging styles, predict sales rates, or isolate the contribution of search.
+At four weeks, LightGBM's mean balanced accuracy across five seeds is 78.51%,
+compared with 50% for the always-positive baseline, but this only assesses the
+binary event. At eight weeks, its mean balanced accuracy is 56.97%; only eight
+negative cases are available, so this result should not support a strong
+conclusion.
+
+Further work should improve stock reconstruction and search-data coverage and
+alignment before drawing stronger conclusions about unconstrained demand or
+the general value of search interest.

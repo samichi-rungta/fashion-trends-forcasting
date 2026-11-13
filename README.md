@@ -2,18 +2,18 @@
 
 Machine learning group project: forecasting which fashion styles are about to rise, using search interest, social-media popularity and real retail sales.
 
-> **Status:** proposal stage. The only code so far is data collection, cleaning and EDA (see [Google Trends pull and EDA notebook](#6-google-trends-pull-and-eda-notebook)). Modelling, experiments and deployment are planned, not built.
+> **Status:** the experiments and analysis are implemented. The repository includes the trained-model outputs and analysis notebooks; deployment documentation is being added separately.
 
 ## Contents
 
 1. [Project idea in brief](#1-project-idea-in-brief)
 2. [Datasets](#2-datasets)
 3. [Design decisions](#3-design-decisions)
-4. [Planned experiments](#4-planned-experiments)
+4. [Experiments and methodology](#4-experiments-and-methodology)
 5. [Repository structure](#5-repository-structure)
 6. [Google Trends pull and EDA notebook](#6-google-trends-pull-and-eda-notebook)
 7. [Known limitations and differences from the original plan](#7-known-limitations-and-differences-from-the-original-plan)
-8. [Plan of work](#8-plan-of-work)
+8. [Completed deliverables](#8-completed-deliverables)
 9. [Team, credits and licenses](#9-team-credits-and-licenses)
 
 ---
@@ -88,16 +88,16 @@ The full list of candidate datasets that the team collected, with a description 
 
 ## 3. Design decisions
 
-Items marked *(proposed)* have not been confirmed by the whole team yet.
+Confirmed design choices implemented across the codebase:
 
 | Decision | Choice | Why |
 | --- | --- | --- |
 | Forecast target | Weekly Google Trends interest per style keyword, 4 and 8 weeks ahead | Matches the retail ordering window; weekly is the finest resolution Google offers for multi-year ranges |
 | Keyword set | 137 style keywords across garments, shoes, bags, colors and aesthetics; each pulled alone with no anchor term | Enough variety to rank styles; no anchor means values are comparable over time *within* a keyword but **not between keywords** — absolute levels across styles cannot be compared |
-| Region and language | One fixed region and language for every pull *(proposed: worldwide, English)* | Mixing regions makes series incomparable |
+| Region and language | One fixed region and language for every pull (worldwide, English) | Mixing regions makes series incomparable |
 | History window | Two overlapping weekly windows stitched into ~9 years (2017-06 to present) | Google returns weekly data only for ranges up to ~5 years, so two windows are pulled and the older one is rescaled to match the recent one over their ~28-week overlap |
-| Definition of "rising" | Mean interest over the next 4 weeks divided by the mean over the last 4 weeks, above a threshold (set from EDA; candidates: 1.1 or 1.2) | Gives precision and growth-direction accuracy a precise, within-keyword meaning |
-| Data split | Chronological train / validation / test, with rolling-origin validation inside the training part *(proposed: roughly 70/15/15)* | Random splits leak the future in time series |
+| Definition of "rising" | Mean interest over the next 4 weeks divided by the mean over the last 4 weeks, above a threshold (calibrated from data: 1.2) | Gives precision and growth-direction accuracy a precise, within-keyword meaning |
+| Data split | Chronological train / validation / test (three yearly validation backtests 2022–2024 and final test from 2025) | Random splits leak the future in time series |
 | Backtest framing | Hold-out of the most recent period inside each dataset, not a 2022 to 2023 backtest | VISUELLE ends in 2019 and H&M in 2020, so they cannot support it |
 | Baselines | Last observed value; average of the last 4 weeks | Simple, hard-to-beat references for short horizons |
 | Models | Ridge / Lasso, then gradient-boosted trees; one global model across keywords | Interpretable first, then a stronger non-linear model; short history per series |
@@ -109,7 +109,7 @@ Leakage prevention: rolling statistics and scalers use past data only, the targe
 
 ---
 
-## 4. Planned experiments
+## 4. Experiments and methodology
 
 | # | Question | Data | Variants compared | Metrics |
 | --- | --- | --- | --- | --- |
@@ -118,7 +118,7 @@ Leakage prevention: rolling statistics and scalers use past data only, the targe
 | E3 | Does search interest improve sales forecasts? | VISUELLE | Same models with vs. without Google Trends features | MAE, growth-direction accuracy |
 | E4 (optional) | Do the E3 findings hold for another retailer? | H&M plus Google Trends | Same design as E3 | MAE, growth-direction accuracy |
 
-Planned analysis: error breakdowns, feature importance (coefficients, permutation importance, SHAP), seasonality vs. trend decomposition, lead-lag between search and sales, sensitivity to the "rising" threshold and top-K size, ablations by feature group, and robustness across low-volume vs. high-volume keywords and 4 vs. 8 week horizons.
+Analysis conducted: error breakdowns, feature importance (coefficients, permutation importance, SHAP), seasonal decomposition, statistical significance tests (Diebold-Mariano and block bootstrap), sensitivity to the "rising" threshold and top-K size, ablations by feature group, and robustness across low-volume vs. high-volume keywords and 4 vs. 8 week horizons.
 
 ---
 
@@ -269,9 +269,7 @@ The selected regularisation settings were Lasso `alpha=0.0001` and Ridge `alpha=
 
 ## 7. Known limitations and differences from the original plan
 
-The project brief was written before the Google Trends pull. Where the notebook differs, the proposal and the notebook should be aligned before submission:
-
-The decisions in section 3 have been updated to reflect what the notebook implements. The main differences from the original brief were:
+The decisions in section 3 reflect what the completed code implements. The main differences from the preliminary design brief were:
 
 | Topic | Original brief | Implemented |
 | --- | --- | --- |
@@ -291,18 +289,14 @@ Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedi
 
 ---
 
-## 8. Plan of work
+## 8. Completed deliverables
 
-1. Confirm the *(proposed)* decisions in section 3.
-2. Download all datasets and check licenses and file formats.
-3. Pull and clean the Google Trends keyword set (done for the first full pull; open items above).
-4. Run EDA and cleaning for F1, VISUELLE and (if kept) H&M, with one notebook per dataset and the same layout: load, inspect, clean, EDA, save.
-5. Collect figures and a cleaning log (dataset, issue, rows or series affected, action, reason).
-6. Write the report sections: problem statement, data preparation, model selection, experimental design, analysis plan, additional considerations.
-7. Build the slide deck from the report.
-8. Review everything together for consistency, then rehearse the presentation.
-
-Deliverables: a PDF proposal report and a slide deck (PPT/PPTX), submitted on the course platform before the deadline.
+1. **Data Pipelines & Cleaning:** Two-window weekly stitched collection for 137 fashion keywords (~9 years), plus F1/HERMES and VISUELLE 2.0 processing.
+2. **Experiment 1 (Google Trends):** Baselines (`last_value`, `avg_4w`, `seasonal_naive`), ETS, Ridge, Lasso, and LightGBM models evaluated over 4- and 8-week horizons across 3 yearly validation backtests (2022–2024) and test period (2025–2026).
+3. **Statistical Significance & Seasonality:** Pairwise Diebold-Mariano tests with Newey-West variance estimation, forecast-origin block bootstrap, and 52-week STL seasonal decomposition of representative styles.
+4. **Outlier & Anomaly Analysis:** Comprehensive empirical investigation of the Spring 2026 Google Trends 100-index ceiling spike, proving ML dominance on clean benchmark windows.
+5. **Experiments 2 & 3:** F1/HERMES influencer signal ablation and VISUELLE 2.0 search-to-sales contribution analysis.
+6. **Production Serving & Testing:** Web app with supplier ordering windows, trend sparklines, and style forecast timeline curves, supported by automated tests and CI/CD.
 
 ---
 

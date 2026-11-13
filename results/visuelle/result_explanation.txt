@@ -24,6 +24,44 @@ stock is only a proxy: some weeks classified as out of stock still contain
 recorded sales. Results therefore measure recorded sales under this filtering
 procedure, rather than unconstrained customer demand.
 
+Separate rolling binary-event forecast
+--------------------------------------
+The retained rolling_forecast_* files evaluate a different forecasting task:
+whether a product-retailer listing's cumulative sales over the next four or
+eight weeks exceed zero. These are binary-event forecasts, not forecasts of
+sales volume or the sales-rate errors reported below. The saved files include
+predictions, validation tuning, per-seed metrics, and a metrics summary.
+
+The original experiment script was found in the separately supplied VISUELLE
+data folder, not this repository. It retrains every four weeks using training
+labels that end before the forecast origin. All 639,740 saved prediction
+labels were checked against the supplied weekly sales and matched the
+subsequent-sales definition. Origin-week sales and search features require
+those observations to be available at forecast time; that assumption and
+other feature availability require further verification. The current source
+also specifies XGBoost, which is absent from the saved predictions, so the
+full saved run has not been reproduced.
+
+The saved test predictions also had severe class imbalance. For four weeks,
+40,732 of 43,499 outcomes were positive (93.64%); an always-positive classifier
+would achieve 93.64% accuracy. For eight weeks, 20,467 of 20,475 were positive
+(99.96%), leaving only eight negatives and an always-positive accuracy of 99.96%.
+Accuracy and precision alone would therefore be misleading, and the eight-week
+negative-class metrics would be highly unstable. The always-positive baseline
+has balanced accuracy of 50% when both classes are present. Interpret
+classification metrics alongside this baseline and the class counts, and
+verify feature availability before relying on the evaluation.
+
+Decision: retain these files as supplementary historical results, but exclude
+them from the project's trend-forecasting performance claims. Selling any
+units is not the same as a style rising, and this target does not measure
+growth direction, rank emerging styles, predict sales rates, or isolate the
+contribution of search. At four weeks, LightGBM's mean balanced accuracy across
+five seeds is 78.51%, above the 50% always-positive baseline, but this only
+assesses the binary event. At eight weeks its mean balanced accuracy is 56.97%;
+the eight negative cases make negative-class performance too fragile to
+support a strong conclusion.
+
 Forecast performance
 --------------------
 The comparison includes last-value and trailing-four-week-average baselines,

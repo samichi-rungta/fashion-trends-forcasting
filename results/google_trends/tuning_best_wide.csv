@@ -1,0 +1,5 @@
+model,horizon,alpha,avg_validation_mae,chosen
+lasso,4,1e-06,1.7733646928468438,True
+lasso,8,1e-06,2.876828052009376,True
+ridge,4,0.0001,1.773332495860841,True
+ridge,8,0.0001,2.8767938643632185,True
