@@ -3,3 +3,4 @@ pandas==2.2.3
 matplotlib==3.10.1
 ipykernel
 lightgbm==4.5.0
+scikit-learn==1.6.1   # needed by LightGBM's model class (rebuild_lightgbm.py)

@@ -1,4 +1,4 @@
-# results/google_trends (Person 1)
+# results/google_trends
 
 Shared format agreed with the team. All dates are week start dates (Sundays).
 

@@ -1,8 +1,13 @@
-# Fashion Trend Forecasting
+# Before the Hype: Fashion Trend Forecasting
 
 Machine learning group project: forecasting which fashion styles are about to rise, using search interest, social-media popularity and real retail sales.
 
-> **Status:** the experiments and analysis are implemented. The repository includes the trained-model outputs and analysis notebooks; deployment documentation is being added separately.
+> **Status (final stage):** the experiments, the model analysis, the deployed buyer app and the weekly update routine are complete.
+>
+> - **Live app:** <https://fashion-trends-api.salmonsky-bf89d2c7.eastasia.azurecontainerapps.io/> (Azure Container Apps; API docs at `/docs`, health check at `/health`)
+> - **Run, test and deploy the app:** [`deployment/README.md`](deployment/README.md)
+> - **Keep the forecasts current (weekly update):** [`update/README.md`](update/README.md)
+> - **Reproduce the model analysis:** the notebooks in [`analysis/`](analysis/) (packages in `analysis/requirements.txt`)
 
 ## Contents
 
@@ -124,24 +129,24 @@ Analysis conducted: error breakdowns, feature importance (coefficients, permutat
 
 ## 5. Repository structure
 
-Suggested layout (adjust to match what is actually committed):
-
 ```
 .
 ├── README.md
-├── .gitignore
-├── requirements.txt
-├── google_trends_eda.ipynb          # pull + cleaning + EDA for Google Trends
-├── google_trends_keywords.xlsx      # INPUT: keyword list (sheet "Keywords")
-├── raw_pulls/                       # generated: one CSV per keyword and window (tracked on purpose)
-│   ├── trends_weekly_raw.csv            # generated: stitched table, all keywords
-│   ├── trends_weekly_clean.csv          # generated: low-volume keywords removed
-│   ├── trends_weekly_nospike.csv        # generated: spike weeks blanked and short gaps filled
-│   ├── trends_spike_weeks.csv           # generated: flag per week
-├── data/
-│   ├── raw/                         # large downloads (F1, VISUELLE, H&M); NOT tracked
-│   └── processed/                   # small cleaned files, tracked if needed
-└── docs/                            # project brief and dataset collection PDFs
+├── requirements.txt                  # packages for the notebooks in the repository root
+├── google_trends_keywords.xlsx       # INPUT: keyword list (sheet "Keywords")
+├── google_trends_eda.ipynb           # Google Trends download, stitching, cleaning and EDA
+├── google_trends_baselines.ipynb     # E1: prepared dataset, baselines, ETS, Ridge, Lasso, significance tests
+├── google_trends_models.ipynb        # E1: LightGBM, logistic regression, rankings, out-of-range flag, ablation
+├── f1_eda.ipynb, f1_models.ipynb     # E2: F1/HERMES influencer signals
+├── visuelle_eda.ipynb                # E3: VISUELLE 2.0 search interest vs. real sales
+├── raw_pulls/                        # cached Google Trends downloads (tracked, for reproducibility)
+├── results/                          # saved outputs of every experiment (google_trends/, f1/, visuelle/)
+├── analysis/                         # model analysis notebooks 00 to 06 and the LightGBM rebuild script
+├── deployment/                       # FastAPI buyer app, Dockerfile, tests, Azure settings
+├── update/                           # weekly update: download, join, forecast, rankings (with tests)
+├── docs/                             # supporting documents
+├── data/                             # large third-party datasets go in data/raw/ (not tracked)
+└── .github/workflows/deployment-ci.yml   # CI/CD: test, build, deploy to Azure
 ```
 
 Large third-party datasets (H&M, VISUELLE, F1 archives) are not committed. Download them into `data/raw/` using the links in section 2; that folder is ignored by git.
@@ -263,7 +268,9 @@ These come from the analysis cell at the end of the notebook and are preliminary
 
 The modelling notebook evaluates four-week average targets using the shared forecast-origin format. It used 137 keywords, retained 3 emerging styles, identified 6 weak stitches and flagged 10 spike weeks. On the full test period, `last_value` is the strongest baseline at both horizons: MAE 5.93 at 4 weeks and 10.37 at 8 weeks. ETS is the best of the fitted simpler models, but is worse than that baseline: MAE 6.40 at 4 weeks and 10.95 at 8 weeks. Removing spike weeks produces nearly the same ranking and only negligible differences, so the simple baseline remains the primary benchmark and the spike-adjusted results are a sensitivity analysis.
 
-The selected regularisation settings were Lasso `alpha=0.0001` and Ridge `alpha=0.01` for both horizons. The largest horizon-4 Ridge features were `style_rel_mom_4`, `lag_0`, `mom_4`, `market_mom_4` and `style_rel`. These are predictive associations, not causal effects.
+With the widened tuning grid (25 values for Ridge, 21 for Lasso), the selected settings were Ridge `alpha=0.0001` and Lasso `alpha=0.000001` for both horizons, so both choose almost no regularisation and give nearly identical forecasts. The largest horizon-4 Ridge and Lasso features were `style_rel_mom_4`, `lag_0`, `mom_4`, `market_mom_4` and `style_rel`. These are predictive associations, not causal effects.
+
+LightGBM (`google_trends_models.ipynb`) is the model used in the app: it was the most accurate model in the validation years and in 2025, and its weekly ranking is useful (54.7% of its weekly top 10 rose, against 20.1% for random picks). After the market-wide surge in spring 2026 its accuracy over the full test period fell below `last_value`; an out-of-range flag now holds back rising alerts when the market's recent growth lies outside the range seen in training. The full analysis is in `analysis/`.
 
 ---
 
@@ -294,15 +301,17 @@ Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedi
 1. **Data Pipelines & Cleaning:** Two-window weekly stitched collection for 137 fashion keywords (~9 years), plus F1/HERMES and VISUELLE 2.0 processing.
 2. **Experiment 1 (Google Trends):** Baselines (`last_value`, `avg_4w`, `seasonal_naive`), ETS, Ridge, Lasso, and LightGBM models evaluated over 4- and 8-week horizons across 3 yearly validation backtests (2022–2024) and test period (2025–2026).
 3. **Statistical Significance & Seasonality:** Pairwise Diebold-Mariano tests with Newey-West variance estimation, forecast-origin block bootstrap, and 52-week STL seasonal decomposition of representative styles.
-4. **Outlier & Anomaly Analysis:** Comprehensive empirical investigation of the Spring 2026 Google Trends 100-index ceiling spike, proving ML dominance on clean benchmark windows.
+4. **Spring 2026 spike:** investigation of the market-wide rise across unrelated keywords in spring 2026 (`docs/spike_investigation_and_resolution.md`); its cause is not known, so results are reported for the full test period, for 2025 only and without the spike weeks.
 5. **Experiments 2 & 3:** F1/HERMES influencer signal ablation and VISUELLE 2.0 search-to-sales contribution analysis.
-6. **Production Serving & Testing:** Web app with supplier ordering windows, trend sparklines, and style forecast timeline curves, supported by automated tests and CI/CD.
+6. **Model analysis:** error analysis, turning points, robustness, buyer replay, SHAP feature importance and weeks of warning before a peak (`analysis/`).
+7. **Deployed app:** FastAPI buyer page and API serving the LightGBM rankings, in Docker on Azure Container Apps, with automated tests and a GitHub Actions CI/CD pipeline (`deployment/`).
+8. **Weekly update:** downloads new Google Trends weeks, forecasts them with the same model and opens them for deployment through a pull request (`update/`).
 
 ---
 
 ## 9. Team, credits and licenses
 
-**Team:** add team members here.
+**Team:** AIT Machine Learning course group project; the team members are listed in the report.
 
 **Credits.**
 - F1 / HERMES dataset: David, Le Corff and Bellot, *HERMES: Hybrid Error-Corrector Model with inclusion of External Signal for non-stationary time series* (<https://arxiv.org/abs/2202.03224>).

@@ -1,15 +1,17 @@
-# Packages used by google_trends_eda.ipynb and person1_google_trends_models.ipynb
-# Versions are not pinned yet. After a successful run, record the exact versions
-# with `pip freeze` and pin them here so the work can be re-run identically.
-# (The modelling notebook was tested with pandas 2.2 / numpy 1.26 / scikit-learn 1.5 / statsmodels 0.14
-#  and with pandas 3 / numpy 2 / scikit-learn 1.8 / statsmodels 0.15.)
-pandas
-numpy
-matplotlib
-seaborn
-statsmodels
-scikit-learn
-joblib
-pytrends
-openpyxl        # needed by pandas.read_excel for google_trends_keywords.xlsx
-jupyterlab
+# Packages for the notebooks in the repository root
+# (google_trends_eda.ipynb, google_trends_baselines.ipynb, google_trends_models.ipynb, f1_*.ipynb, visuelle_eda.ipynb).
+# Pinned to the versions in the environment used to rerun and test the final code (November 2026).
+# The analysis notebooks, the weekly update and the app have their own files:
+# analysis/requirements.txt, update/requirements.txt, deployment/requirements.txt.
+# Note: numpy 2.5 is newer than pandas 2.2.3 expects; everything runs, but numpy prints deprecation warnings.
+pandas==2.2.3
+numpy==2.5.4
+matplotlib==3.10.1
+seaborn==0.13.2
+statsmodels==0.15.0
+scikit-learn==1.6.1
+joblib==1.6.0
+pytrends==4.9.2
+openpyxl==3.1.5       # needed by pandas.read_excel for google_trends_keywords.xlsx
+jupyterlab==4.6.4
+lightgbm==4.5.0       # google_trends_models.ipynb
