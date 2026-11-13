@@ -18,9 +18,13 @@ def _logratio(a, b):
     return np.log((a + EPS) / (b + EPS))
 
 
-def build_table() -> tuple[pd.DataFrame, list]:
-    """All inputs for every week and style, exactly as in the modelling notebook."""
-    wide = pd.read_csv(WEEKLY_FILE, index_col=0, parse_dates=True).sort_index()
+def build_table(weekly_file=WEEKLY_FILE) -> tuple[pd.DataFrame, list]:
+    """All inputs for every week and style, exactly as in the modelling notebook.
+
+    weekly_file: the weekly search table to use. The default is the frozen study data;
+    the weekly update passes the live table, which has the newer weeks added.
+    """
+    wide = pd.read_csv(weekly_file, index_col=0, parse_dates=True).sort_index()
     category = dict(pd.read_csv(KEYWORD_FILE)[["item", "category"]].values)
     last4 = wide.rolling(4).mean()
     feats = {}

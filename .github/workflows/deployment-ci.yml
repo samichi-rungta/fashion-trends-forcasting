@@ -13,10 +13,12 @@ on:
   push:
     paths:
       - "deployment/**"
+      - "update/**"
       - ".github/workflows/deployment-ci.yml"
   pull_request:
     paths:
       - "deployment/**"
+      - "update/**"
       - ".github/workflows/deployment-ci.yml"
   workflow_dispatch: # adds a "Run workflow" button on the Actions tab
 
@@ -40,6 +42,9 @@ jobs:
 
       - name: Run tests
         run: python -m pytest -v
+
+      - name: Run weekly-update tests
+        run: python -m pytest -v ../update/tests
 
   build:
     needs: test # only build if the tests passed

@@ -13,7 +13,11 @@
    exp(value) - 1 is the push in percent.
 
 Run from the analysis folder:  python export_app_data.py
+The weekly update uses the live search table instead of the frozen study data:
+    python export_app_data.py --weekly-file ../update/data/trends_weekly_live.csv
 """
+import argparse
+
 import numpy as np
 import pandas as pd
 
@@ -33,8 +37,8 @@ GROUPS = {
 }
 
 
-def explain(h: int, weeks: list) -> pd.DataFrame:
-    table, numeric = build_table()
+def explain(h: int, weeks: list, weekly_file=WEEKLY_FILE) -> pd.DataFrame:
+    table, numeric = build_table(weekly_file)
     features = numeric + ["category"]
     assert sorted(sum(GROUPS.values(), [])) == sorted(features), "every input must belong to one group"
     d = rows_for(table, numeric, h)
@@ -56,15 +60,15 @@ def explain(h: int, weeks: list) -> pd.DataFrame:
     return pd.concat(parts, ignore_index=True)
 
 
-def main():
+def main(weekly_file=WEEKLY_FILE):
     rankings = pd.read_csv(APP_DATA / "rankings.csv", parse_dates=["week"])
     weeks = sorted(rankings["week"].unique())
 
-    history = pd.read_csv(WEEKLY_FILE, parse_dates=["date"])
+    history = pd.read_csv(weekly_file, parse_dates=["date"])
     history = history[history["date"] <= weeks[-1]]
     history.round(2).to_csv(APP_DATA / "search_history.csv", index=False)
 
-    ex = pd.concat([explain(h, weeks) for h in (4, 8)], ignore_index=True)
+    ex = pd.concat([explain(h, weeks, weekly_file) for h in (4, 8)], ignore_index=True)
     check = ex.merge(rankings[["week", "style", "horizon", "predicted_growth"]], on=["week", "style", "horizon"])
     print(f"{len(check)} of {len(rankings)} forecasts explained; "
           f"correlation with the live forecast {check['explained_growth'].corr(check['predicted_growth']):.4f}, "
@@ -74,4 +78,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Export search_history.csv and explanations.csv for the app.")
+    parser.add_argument("--weekly-file", default=WEEKLY_FILE,
+                        help="weekly search table (default: the frozen study data)")
+    main(parser.parse_args().weekly_file)
