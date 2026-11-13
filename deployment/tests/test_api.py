@@ -53,7 +53,7 @@ def test_flagged_weeks_hold_back_all_alerts():
     data = client.get("/rankings", params={"week": flagged[0], "top_k": 200}).json()
     assert data["alerts_held_back"] is True
     assert data["rising_count"] == 0
-    assert "Unusual market week" in client.get("/", params={"week": flagged[0]}).text
+    assert "Unusual week." in client.get("/", params={"week": flagged[0]}).text
 
 
 def test_market_columns_are_consistent():
@@ -109,12 +109,45 @@ def test_unexpected_error_returns_500_and_is_logged(monkeypatch, caplog):
     assert any("error method=GET path=/rankings" in r.getMessage() for r in caplog.records)
 
 
-def test_home_page_shows_kpis_cards_and_table():
+def test_home_page_shows_category_cards_and_table():
     page = client.get("/").text
     assert "What to stock for the next 4 weeks" in page
-    for kpi in ("Overall market trend", "High-conviction breakouts", "Leading category", "Factory order window"):
-        assert kpi in page
+    assert "Predicted growth in Google search interest." in page
     assert 'class="grid"' in page and '<table id="table">' in page
+    # no technical labels on the page a buyer sees
+    for jargon in ("High-conviction", "Alpha vs. market", "SHAP", "Overall market trend"):
+        assert jargon not in page
+
+
+def test_category_cards_follow_the_stock_up_items():
+    from app import page as page_module
+    data = main.get_rankings(None, 4, 200, None)
+    rows = main.RANKINGS[(main.RANKINGS["week"] == data["week"]) & (main.RANKINGS["horizon"] == 4)].copy()
+    rows["action"] = rows.apply(page_module.action, axis=1)
+    html = page_module.top_section(rows, data, 6, data["week"], None)
+    stock = rows[rows["action"] == "stock"]
+    if stock.empty:
+        assert "No items are expected to rise more than 20%" in html
+    else:
+        best = stock.groupby("category").size().sort_values(ascending=False)
+        assert best.index[0] in html
+        assert f"{best.iloc[0]} {'style' if best.iloc[0] == 1 else 'styles'} predicted to rise" in html
+        assert html.count('class="cat-card"') == min(3, len(best))
+    # with every alert held back, there are no cards, only the plain message
+    rows["action"] = "check"
+    assert "No items are expected to rise more than 20%" in page_module.top_section(rows, data, 6, data["week"], None)
+
+
+def test_unusual_forecast_note():
+    from app import page as page_module
+    dates = pd.date_range("2017-06-04", "2026-11-01", freq="7D")
+    flat = pd.DataFrame(50.0, index=dates, columns=[f"s{i}" for i in range(30)])  # nothing ever changes
+    assert page_module.past_market_range(flat, "2026-11-01", 4) == pytest.approx((1.0, 1.0))
+    rows = pd.DataFrame({"style": ["a"], "category": ["X"], "predicted_growth": [1.5], "action": ["stock"]})
+    usual = {"horizon": 4, "week": "2026-11-01", "market_growth": 1.0}
+    unusual = usual | {"market_growth": 1.25}
+    assert "Unusual forecast" not in page_module.top_section(rows, usual, 6, "2026-11-01", flat)
+    assert "Unusual forecast" in page_module.top_section(rows, unusual, 6, "2026-11-01", flat)
 
 
 def test_home_page_category_filter():
@@ -211,8 +244,12 @@ def test_page_works_without_detail_files():
     assert '"shap"' not in html and '"hist"' not in html and "What to stock" in html
 
 
-@pytest.mark.parametrize("lead, horizon, text", [(6, 4, "misses this 4-week window"), (6, 8, "last 2 of the 8")])
-def test_order_window_kpi(monkeypatch, lead, horizon, text):
+@pytest.mark.parametrize("lead, horizon, text", [
+    (6, 4, "so your order would arrive after this period. Check the 8-week forecast."),
+    (6, 8, "2 weeks before this forecast period ends"),
+    (8, 8, "just as this forecast period ends"),
+])
+def test_delivery_note(monkeypatch, lead, horizon, text):
     monkeypatch.setenv("ORDER_LEAD_WEEKS", str(lead))
     assert text in client.get("/", params={"horizon": horizon}).text
 
