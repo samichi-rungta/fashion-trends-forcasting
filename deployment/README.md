@@ -264,6 +264,5 @@ az group delete --name rg-fashion-trends --yes
 
 ## Not done yet (remaining work)
 
-- Automatic weekly update: fetch new searches, rerun the model, rebuild `rankings.csv`, then rerun
-  `analysis/export_app_data.py` so the item details stay in step.
+- Fully automatic weekly update: the update is semi-automatic. The data pull is started from a laptop, because Google Trends often blocks cloud servers. See `update/README.md` for the steps.
 
