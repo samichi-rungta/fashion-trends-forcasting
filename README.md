@@ -48,16 +48,16 @@ Machine learning group project: forecasting which fashion styles are about to ri
 | What people actually buy | Does search interest improve sales forecasts? | VISUELLE 2.0 (optionally H&M) |
 
 **Baselines and models.**
-- Baselines: last observed value, and the average of the last 4 weeks.
-- Models: regularized regression (Ridge / Lasso), then gradient-boosted trees (LightGBM or XGBoost).
+- Baselines: last observed value, the average of the last 4 weeks, and the same weeks one year earlier (seasonal naive).
+- Models: exponential smoothing (ETS), regularized regression (Ridge / Lasso), logistic regression for the rising label, and LightGBM (the model used in the app). XGBoost is also used in the VISUELLE experiment.
 
-**Metrics.** MAE, precision of the top-K predicted rising styles, and growth-direction accuracy.
+**Metrics.** MAE, MAE relative to the four-week-average baseline, precision and recall of rising alerts, and precision of the top-K predicted rising styles. The supporting experiments use MASE (F1/HERMES) and WAPE (VISUELLE).
 
 **Success criteria.**
-- ML level: lower MAE than both baselines and higher growth-direction accuracy.
-- Business level: precision of the top-K predicted rising styles, and how many weeks of lead time the forecast gives before a style peaks.
+- ML level: lower forecast error than the baselines, and more precise rising alerts.
+- Business level: precision of the top-K predicted rising styles, and how many weeks of warning the forecast gives before a style peaks.
 
-**Deployment (planned).** A web app on AWS or Azure showing forecasts, upcoming styles and suggested order periods. Architecture: cloud storage for cleaned data and models, a scheduled weekly job that refreshes Google Trends and re-scores the styles, a small API, and a simple front end. CI/CD via Git, with lint and tests on every push.
+**Deployment (as built).** A FastAPI buyer page and JSON API serving precomputed forecasts, in a Docker container on Azure Container Apps (East Asia). A GitHub Actions pipeline runs the automated tests, builds and smoke-tests the image, and deploys from `main`, signing in to Azure without a stored password. New data is added by a semi-automatic weekly update that is started from a laptop and delivered through a pull request. Details: [`deployment/README.md`](deployment/README.md) and [`update/README.md`](update/README.md).
 
 **What the system does not claim.** Search interest is a proxy for demand, not sales, and the forecasts do not prove causation.
 
@@ -104,8 +104,8 @@ Confirmed design choices implemented across the codebase:
 | Definition of "rising" | Mean interest over the next 4 weeks divided by the mean over the last 4 weeks, above a threshold (calibrated from data: 1.2) | Gives precision and growth-direction accuracy a precise, within-keyword meaning |
 | Data split | Chronological train / validation / test (three yearly validation backtests 2022–2024 and final test from 2025) | Random splits leak the future in time series |
 | Backtest framing | Hold-out of the most recent period inside each dataset, not a 2022 to 2023 backtest | VISUELLE ends in 2019 and H&M in 2020, so they cannot support it |
-| Baselines | Last observed value; average of the last 4 weeks | Simple, hard-to-beat references for short horizons |
-| Models | Ridge / Lasso, then gradient-boosted trees; one global model across keywords | Interpretable first, then a stronger non-linear model; short history per series |
+| Baselines | Last observed value; average of the last 4 weeks; seasonal naive (same weeks a year earlier) | Simple, hard-to-beat references for short horizons |
+| Models | ETS per style; Ridge / Lasso, then LightGBM as one global model across keywords | Interpretable first, then a stronger non-linear model; short history per series |
 | Evaluation scope | Each dataset evaluated separately, never pooled | Different units, periods and meanings of "popularity" |
 | F1 handling | Separate benchmark only; no join with other data | Series are anonymized, so no style can be matched |
 | Synthetic data | Not used | Real data is available for every experiment |
@@ -118,12 +118,12 @@ Leakage prevention: rolling statistics and scalers use past data only, the targe
 
 | # | Question | Data | Variants compared | Metrics |
 | --- | --- | --- | --- | --- |
-| E1 | Can past search interest forecast future interest better than a simple rule? | Google Trends keywords | Two baselines vs. Ridge/Lasso vs. boosted trees; horizons of 4 and 8 weeks | MAE, growth-direction accuracy, precision at top-K |
-| E2 | Do influencer signals improve social-media trend forecasts? | F1 / HERMES | Same models with vs. without the weak signal | MAE, growth-direction accuracy |
-| E3 | Does search interest improve sales forecasts? | VISUELLE | Same models with vs. without Google Trends features | MAE, growth-direction accuracy |
-| E4 (optional) | Do the E3 findings hold for another retailer? | H&M plus Google Trends | Same design as E3 | MAE, growth-direction accuracy |
+| E1 | Can past search interest forecast future interest better than a simple rule? | Google Trends keywords | Three baselines vs. ETS vs. Ridge/Lasso vs. LightGBM; horizons of 4 and 8 weeks | MAE, relative MAE, precision and recall of rising alerts, precision at top-K |
+| E2 | Do influencer signals improve social-media trend forecasts? | F1 / HERMES | Baselines, ETS and LightGBM with vs. without influencer inputs | MAE, training-scaled MASE |
+| E3 | Does search interest improve sales forecasts? | VISUELLE | Baselines, Ridge, XGBoost and LightGBM with vs. without Google Trends features | WAPE, MAE |
+| E4 (optional, not carried out) | Do the E3 findings hold for another retailer? | H&M plus Google Trends | Same design as E3 | Not applicable |
 
-Analysis conducted: error breakdowns, feature importance (coefficients, permutation importance, SHAP), seasonal decomposition, statistical significance tests (Diebold-Mariano and block bootstrap), sensitivity to the "rising" threshold and top-K size, ablations by feature group, and robustness across low-volume vs. high-volume keywords and 4 vs. 8 week horizons.
+Analysis conducted: error breakdowns by period, category and type of style (emerging and weak-stitch styles), turning points, feature importance (model coefficients and SHAP), seasonal decomposition, statistical significance tests (Diebold-Mariano and block bootstrap), sensitivity to the "rising" threshold, top-K size and random seed, ablation by feature group, a buyer replay and weeks of warning before a peak, for both 4- and 8-week horizons.
 
 ---
 
@@ -141,7 +141,7 @@ Analysis conducted: error breakdowns, feature importance (coefficients, permutat
 ├── visuelle_eda.ipynb                # E3: VISUELLE 2.0 search interest vs. real sales
 ├── raw_pulls/                        # cached Google Trends downloads (tracked, for reproducibility)
 ├── results/                          # saved outputs of every experiment (google_trends/, f1/, visuelle/)
-├── analysis/                         # model analysis notebooks 00 to 06 and the LightGBM rebuild script
+├── analysis/                         # model analysis notebooks 00 to 06, the significance script 07 and the LightGBM rebuild script
 ├── deployment/                       # FastAPI buyer app, Dockerfile, tests, Azure settings
 ├── update/                           # weekly update: download, join, forecast, rankings (with tests)
 ├── docs/                             # supporting documents
@@ -252,23 +252,23 @@ Make sure `google_trends_keywords.xlsx` is in the same folder as the notebook, b
 | 13 | Saves the cleaned files |
 | Final markdown cell | Written analysis of the full pull and a list of next steps |
 
-### Main findings so far (full pull, 137 keywords, 2017-06 to 2026-10)
+### Main findings from the EDA (full pull, 137 keywords, 2017-06 to 2026-10)
 
-These come from the analysis cell at the end of the notebook and are preliminary.
+These come from the analysis cell at the end of the notebook.
 
 - **Coverage.** 489 weekly observations for all 137 keywords. Both windows came back weekly and the 28-week overlap stitched without errors. The only missing values come from `mob wife aesthetic`, which has no data in the older window. Six keywords have an unreliable stitch factor because of low volume in the overlap (`barrel jeans`, `balloon skirt`, `oversized sunglasses`, `floral print`, `quiet luxury`, `balletcore`).
 - **Zero-share filter removes the wrong keywords.** The 30% cut-off dropped `balletcore`, `clean girl aesthetic` and `gorpcore`. These are emerging aesthetics whose zeros reflect when the term appeared, not low volume today, and they are exactly the kind of trend the project wants to forecast.
 - **Trends.** `ballet flats` rose strongly from 2023 and stays high after the 2026 spike, which looks like a sustained revival. `cargo pants` rose to about 2023 to 2024 and then fell back. `skinny jeans` declined slowly.
 - **Seasonality.** Outerwear is the only clearly seasonal category (peak around mid-November). Lag-52 autocorrelation is high mostly for strongly trending keywords, so a detrended measure is needed before ranking keywords by seasonality.
 - **Market-wide movement.** Nearly every keyword went up in the last year, and even unrelated keywords correlate positively. A market-wide factor (or a change in how Google scales the data) is mixed in with style-specific changes.
-- **Spring 2026 spike.** Many unrelated keywords jumped together in several weeks of 2026. With `SPIKE_SHARE = 0.5`, only 4 weeks were flagged, so the "no spike" version still contains most of the spike. The cause is unknown.
+- **Spring 2026 spike.** Many unrelated keywords jumped together in several weeks of 2026. A first check with `SPIKE_SHARE = 0.5` flagged only 4 weeks, so the final cleaning uses 0.25, which flags 10 weeks (8 and 15 February, and 29 March to 17 May 2026). The cause is unknown.
 - **"Rising" threshold.** Share of keyword-weeks above each threshold: above 1.1 is 24.1%, above 1.2 is 11.9%, above 1.3 is 6.9%, above 1.5 is 2.9%.
 
 ### Modelling results from the prepared dataset
 
 The modelling notebook evaluates four-week average targets using the shared forecast-origin format. It used 137 keywords, retained 3 emerging styles, identified 6 weak stitches and flagged 10 spike weeks. On the full test period, `last_value` is the strongest baseline at both horizons: MAE 5.93 at 4 weeks and 10.37 at 8 weeks. ETS is the best of the fitted simpler models, but is worse than that baseline: MAE 6.40 at 4 weeks and 10.95 at 8 weeks. Removing spike weeks produces nearly the same ranking and only negligible differences, so the simple baseline remains the primary benchmark and the spike-adjusted results are a sensitivity analysis.
 
-With the widened tuning grid (25 values for Ridge, 21 for Lasso), the selected settings were Ridge `alpha=0.0001` and Lasso `alpha=0.000001` for both horizons, so both choose almost no regularisation and give nearly identical forecasts.Validation error is flat for any penalty of 1e-5 or below, so both are effectively ordinary linear regression. The largest horizon-4 Ridge and Lasso features were `style_rel_mom_4`, `lag_0`, `mom_4`, `market_mom_4` and `style_rel`. These are predictive associations, not causal effects.
+With the widened tuning grid (25 values for Ridge, 21 for Lasso), the selected settings were Ridge `alpha=0.0001` and Lasso `alpha=0.000001` for both horizons, so both choose almost no regularisation and give nearly identical forecasts. Validation error is flat for any penalty of 1e-5 or below, so both are effectively ordinary linear regression. The largest horizon-4 Ridge and Lasso features were `style_rel_mom_4`, `lag_0`, `mom_4`, `market_mom_4` and `style_rel`. These are predictive associations, not causal effects.
 
 LightGBM (`google_trends_models.ipynb`) is the model used in the app: it was the most accurate model in the validation years and in 2025, and its weekly ranking is useful (54.7% of its weekly top 10 rose, against 20.1% for random picks). After the market-wide surge in spring 2026 its accuracy over the full test period fell below `last_value`; an out-of-range flag now holds back rising alerts when the market's recent growth lies outside the range seen in training. The full analysis is in `analysis/`.
 
@@ -291,6 +291,7 @@ Other limitations:
 - VISUELLE covers one Italian brand over about three years; H&M covers about two years that include the COVID-19 shock.
 - The datasets cover different periods and cannot be pooled, so each result stands alone.
 - Results describe the chosen region and language only.
+- The optional H&M experiment (E4) and an LSTM for F1/HERMES were not carried out.
 
 Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedia Pageviews; if the search signal is weak, report that as a finding and shift weight to F1; if the tag-to-keyword mapping is too noisy, match at category level; if a dataset license blocks use, swap in another from the candidate list. Minimum scope is Google Trends plus VISUELLE, with F1 and H&M as extensions.
 
@@ -319,4 +320,4 @@ Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedi
 - H&M Personalized Fashion Recommendations: Kaggle competition hosted by H&M.
 - Google Trends data is accessed through the unofficial `pytrends` library.
 
-**Licenses.** Each dataset keeps its own license and terms of use; check them before redistributing any data. Add a license for this repository's code here.
+**Licenses.** Each dataset keeps its own license and terms of use; check them before redistributing any data. No open-source license has been chosen for this repository's code, so all rights are reserved by the authors.
