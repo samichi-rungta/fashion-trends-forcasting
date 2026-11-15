@@ -45,7 +45,7 @@ Machine learning group project: forecasting which fashion styles are about to ri
 | --- | --- | --- |
 | What people search for | Can past search interest forecast future interest? | Google Trends |
 | What attracts social-media attention | Do influencer signals improve trend forecasts? | F1 / HERMES |
-| What people actually buy | Does search interest improve sales forecasts? | VISUELLE 2.0 (optionally H&M) |
+| What people actually buy | Does search interest improve sales forecasts? | VISUELLE 2.0 |
 
 **Baselines and models.**
 - Baselines: last observed value, the average of the last 4 weeks, and the same weeks one year earlier (seasonal naive).
@@ -70,17 +70,15 @@ Machine learning group project: forecasting which fashion styles are about to ri
 | Dataset | What it is | Role | Key limits |
 | --- | --- | --- | --- |
 | **Google Trends** (primary) | Relative search interest (0 to 100) per keyword, weekly | Main forecasting target; also a feature source for the retail experiments | Values are relative and rescaled per query; ambiguous keywords; search is not sales; rate limits |
-| **F1 / HERMES** | 10,000 weekly fashion time series from social media, plus 10,000 matching influencer ("weak") signals, normalized and anonymized | Benchmark for forecasting methods and for the influencer-signal ablation | Anonymized, so styles cannot be named; date range, length and license unconfirmed; social popularity, not sales |
+| **F1 / HERMES** | 10,000 weekly fashion time series from social media, plus 10,000 matching influencer ("weak") signals, normalized and anonymized | Benchmark for forecasting methods and for the influencer-signal ablation | Anonymized, so styles cannot be named; weekly from January 2015 to December 2019 (261 weeks); license unconfirmed; social popularity, not sales |
 | **VISUELLE 2.0** | Weekly sales, stock, prices and discounts for 5,355 products of Nuna Lie (Italian fast-fashion brand), 6 seasons in 2017 to 2019; tags, images, bundled Google Trends, weather and customer data | Tests whether search interest improves sales forecasts | One brand, about 3 years; file format and license to verify after download |
-| **H&M Personalized Fashion Recommendations** (optional) | About 31M transactions, 105,542 articles, about 1.3M customers, roughly Sep 2018 to Sep 2020 | Second retailer, to check whether the VISUELLE findings generalize | About 2 years only; includes the COVID-19 shock; Google Trends must be pulled separately for the matching period; prices are scaled, not real currency |
 
 Download links:
 - Google Trends: pulled by the notebook in this repo (see section 6).
 - F1 / HERMES: <https://github.com/etidav/f1fashiondataset> (archive: <http://files.heuritech.com/raw_files/f1_fashion_dataset.tar.xz>, containing `f1_main.csv` and `f1_fashion_forward.csv`)
 - VISUELLE 2.0: <https://humaticslab.github.io/forecasting/visuelle>
-- H&M: <https://www.kaggle.com/competitions/h-and-m-personalized-fashion-recommendations>
 
-### Supporting sources (fallbacks or extra features, not in the core plan)
+### Other sources considered (not used in the final project)
 
 - **Wikipedia Pageviews**: absolute view counts since 2015, a second interest signal and a backup if Google Trends is blocked.
 - **FRED** (UMCSENT, UNRATE, CPIAUCSL): economic indicators for an ablation test.
@@ -103,7 +101,7 @@ Confirmed design choices implemented across the codebase:
 | History window | Two overlapping weekly windows stitched into ~9 years (2017-06 to present) | Google returns weekly data only for ranges up to ~5 years, so two windows are pulled and the older one is rescaled to match the recent one over their ~28-week overlap |
 | Definition of "rising" | Mean interest over the next 4 weeks divided by the mean over the last 4 weeks, above a threshold (calibrated from data: 1.2) | Gives precision and growth-direction accuracy a precise, within-keyword meaning |
 | Data split | Chronological train / validation / test (three yearly validation backtests 2022–2024 and final test from 2025) | Random splits leak the future in time series |
-| Backtest framing | Hold-out of the most recent period inside each dataset, not a 2022 to 2023 backtest | VISUELLE ends in 2019 and H&M in 2020, so they cannot support it |
+| Backtest framing | Hold-out of the most recent period inside each dataset, not a 2022 to 2023 backtest | VISUELLE ends in early 2020 and F1/HERMES in 2019, so they cannot support it |
 | Baselines | Last observed value; average of the last 4 weeks; seasonal naive (same weeks a year earlier) | Simple, hard-to-beat references for short horizons |
 | Models | ETS per style; Ridge / Lasso, then LightGBM as one global model across keywords | Interpretable first, then a stronger non-linear model; short history per series |
 | Evaluation scope | Each dataset evaluated separately, never pooled | Different units, periods and meanings of "popularity" |
@@ -149,7 +147,7 @@ Analysis conducted: error breakdowns by period, category and type of style (emer
 └── .github/workflows/deployment-ci.yml   # CI/CD: test, build, deploy to Azure
 ```
 
-Large third-party datasets (H&M, VISUELLE, F1 archives) are not committed. Download them into `data/raw/` using the links in section 2; that folder is ignored by git.
+Large third-party datasets (VISUELLE and the F1 archives) are not committed. Download them into `data/raw/` using the links in section 2; that folder is ignored by git.
 
 ---
 
@@ -288,12 +286,12 @@ The decisions in section 3 reflect what the completed code implements. The main 
 Other limitations:
 - Google Trends is relative (0 to 100), sampled, and measures attention, not purchases. Low-volume keywords return many zeros, and some keywords have non-fashion meanings.
 - F1 is anonymized, so no style can be named, and its dates and license are unconfirmed.
-- VISUELLE covers one Italian brand over about three years; H&M covers about two years that include the COVID-19 shock.
+- VISUELLE covers one Italian brand over about three years.
 - The datasets cover different periods and cannot be pooled, so each result stands alone.
 - Results describe the chosen region and language only.
 - The optional H&M experiment (E4) and an LSTM for F1/HERMES were not carried out.
 
-Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedia Pageviews; if the search signal is weak, report that as a finding and shift weight to F1; if the tag-to-keyword mapping is too noisy, match at category level; if a dataset license blocks use, swap in another from the candidate list. Minimum scope is Google Trends plus VISUELLE, with F1 and H&M as extensions.
+Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedia Pageviews; if the search signal is weak, report that as a finding and shift weight to F1; if the tag-to-keyword mapping is too noisy, match at category level; if a dataset license blocks use, swap in another from the candidate list. Minimum scope was Google Trends plus VISUELLE, with F1 as an extension.
 
 ---
 
@@ -317,7 +315,6 @@ Risks and fallbacks: if Google Trends access fails, use cached pulls or Wikipedi
 **Credits.**
 - F1 / HERMES dataset: David, Le Corff and Bellot, *HERMES: Hybrid Error-Corrector Model with inclusion of External Signal for non-stationary time series* (<https://arxiv.org/abs/2202.03224>).
 - VISUELLE 2.0: Skenderi et al., *The Multi-Modal Universe of Fast-Fashion: the Visuelle 2.0 Benchmark* (CVPR Workshops 2022).
-- H&M Personalized Fashion Recommendations: Kaggle competition hosted by H&M.
 - Google Trends data is accessed through the unofficial `pytrends` library.
 
 **Licenses.** Each dataset keeps its own license and terms of use; check them before redistributing any data. No open-source license has been chosen for this repository's code, so all rights are reserved by the authors.
